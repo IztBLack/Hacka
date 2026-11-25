@@ -4,7 +4,16 @@ from __future__ import annotations
 
 from datetime import date
 
-from sqlalchemy import Date, Float, ForeignKey, Integer, String, UniqueConstraint
+from sqlalchemy import (
+    CheckConstraint,
+    Date,
+    Float,
+    ForeignKey,
+    Index,
+    Integer,
+    String,
+    UniqueConstraint,
+)
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db import Base, MixinFechas
@@ -48,7 +57,11 @@ class LineaOrdenCompra(Base):
     """
 
     __tablename__ = "linea_orden_compra"
-    __table_args__ = (UniqueConstraint("orden_compra_id", "sku", name="uq_oc_sku"),)
+    __table_args__ = (
+        UniqueConstraint("orden_compra_id", "sku", name="uq_oc_sku"),
+        CheckConstraint("cantidad_solicitada > 0", name="ck_linea_oc_cantidad_positiva"),
+        Index("ix_linea_orden_compra_oc_sku", "orden_compra_id", "sku"),
+    )
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     orden_compra_id: Mapped[int] = mapped_column(

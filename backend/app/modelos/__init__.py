@@ -1,13 +1,11 @@
-"""Modelos SQLAlchemy 2.0 (adaptador de persistencia).
+"""Modelos ORM del CEDIS. Importar este paquete registra todas las tablas en Base."""
 
-Se importan todos aquí para que `Base.metadata` quede completa antes de que
-Alembic genere migraciones o las pruebas creen el esquema en SQLite.
-"""
-
-from app.modelos.acta import Acta, TipoActa
+from app.modelos.acta import Acta
 from app.modelos.bulto import Bulto
+from app.modelos.catalogos import Anden, Sucursal, Ubicacion, Usuario
 from app.modelos.cita import Cita
 from app.modelos.embarque import Embarque
+from app.modelos.etiqueta import Etiqueta
 from app.modelos.evento_bulto import EventoBulto
 from app.modelos.orden_compra import LineaOrdenCompra, OrdenCompra
 from app.modelos.proveedor import Proveedor
@@ -15,13 +13,17 @@ from app.modelos.tarima import Tarima
 
 __all__ = [
     "Acta",
-    "TipoActa",
+    "Anden",
     "Bulto",
     "Cita",
     "Embarque",
+    "Etiqueta",
     "EventoBulto",
     "LineaOrdenCompra",
     "OrdenCompra",
     "Proveedor",
+    "Sucursal",
     "Tarima",
+    "Ubicacion",
+    "Usuario",
 ]

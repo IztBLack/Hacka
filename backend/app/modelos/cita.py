@@ -4,7 +4,8 @@ from __future__ import annotations
 
 from datetime import date, time
 
-from sqlalchemy import Date, ForeignKey, Integer, String, Time, UniqueConstraint
+from sqlalchemy import Date, ForeignKey, Integer, String, Time, UniqueConstraint, text
+from sqlalchemy.dialects.postgresql import ExcludeConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db import Base, MixinFechas
@@ -19,10 +20,14 @@ class Cita(Base, MixinFechas):
 
     __tablename__ = "cita"
     __table_args__ = (
-        # Una cita por folio; el traslape en el mismo andén se valida en el
-        # dominio antes de insertar (aquí no cabe una restricción de rango
-        # portable entre PostgreSQL y SQLite).
         UniqueConstraint("fecha", "anden", "hora_inicio", name="uq_anden_inicio"),
+        ExcludeConstraint(
+            ("anden", "="),
+            (text("tsrange(fecha + hora_inicio, fecha + hora_fin)"), "&&"),
+            name="ex_cita_sin_traslape_anden",
+            using="gist",
+            where=text("estado IN ('CONFIRMADA', 'EN_DESCARGA')"),
+        ),
     )
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)

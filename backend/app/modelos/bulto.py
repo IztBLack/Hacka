@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from sqlalchemy import Float, ForeignKey, Integer, String
+from sqlalchemy import CheckConstraint, Float, ForeignKey, Index, Integer, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db import Base, MixinFechas
@@ -17,6 +17,11 @@ class Bulto(Base, MixinFechas):
     """
 
     __tablename__ = "bulto"
+    __table_args__ = (
+        CheckConstraint("cantidad > 0", name="ck_bulto_cantidad_positiva"),
+        CheckConstraint("peso_kg > 0", name="ck_bulto_peso_positivo"),
+        Index("ix_bulto_cita_estado", "cita_id", "estado"),
+    )
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     id_bulto: Mapped[str] = mapped_column(String(24), unique=True, index=True)  # B00412

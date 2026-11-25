@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from datetime import datetime
 
-from sqlalchemy import DateTime, Float, ForeignKey, Integer, String
+from sqlalchemy import CheckConstraint, DateTime, Float, ForeignKey, Index, Integer, String, text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db import Base, MixinFechas, ahora_utc
@@ -18,6 +18,15 @@ class Tarima(Base, MixinFechas):
     """
 
     __tablename__ = "tarima"
+    __table_args__ = (
+        CheckConstraint("peso_kg <= 1000", name="ck_tarima_peso_maximo"),
+        Index(
+            "ix_tarima_consolidacion",
+            "sucursal",
+            "armada_en",
+            postgresql_where=text("embarque_id IS NULL"),
+        ),
+    )
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     folio: Mapped[str] = mapped_column(String(32), unique=True, index=True)
