@@ -1,0 +1,49 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    font-family: Inter, system-ui, sans-serif;
+  }
+
+  body {
+    margin: 0;
+    background-color: theme('colors.piso');
+    color: theme('colors.tinta.DEFAULT');
+  }
+
+  /* Los números de la operación se leen en columna: tabulares siempre. */
+  .num {
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+@layer components {
+  .etiqueta-campo {
+    @apply block text-[11px] font-semibold uppercase tracking-wide text-apagado;
+  }
+
+  .tarjeta {
+    @apply rounded-[10px] border border-linea bg-white;
+  }
+
+  .boton-primario {
+    @apply min-h-toque rounded-[7px] bg-azul px-5 py-3 text-[13px] font-semibold text-white
+           transition-colors hover:bg-azul-osc focus-visible:outline focus-visible:outline-2
+           focus-visible:outline-offset-2 focus-visible:outline-azul disabled:opacity-50;
+  }
+
+  .boton-secundario {
+    @apply min-h-toque rounded-[7px] border border-linea-2 bg-white px-[18px] py-3 text-[13px]
+           font-medium text-tinta transition-colors hover:bg-piso focus-visible:outline
+           focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-azul;
+  }
+
+  .campo {
+    @apply w-full rounded-md border border-linea-2 px-[11px] py-[9px] text-sm
+           focus:border-azul focus:outline-none focus:ring-1 focus:ring-azul;
+  }
+}
