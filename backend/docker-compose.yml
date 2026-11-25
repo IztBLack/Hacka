@@ -1,0 +1,65 @@
+# Nodo edge del CEDIS: api + postgres + redis.
+# Docker Compose y no Kubernetes a proposito: un solo nodo no lo justifica.
+
+services:
+  api:
+    build: .
+    container_name: cedis-api
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    environment:
+      # Dentro de la red de compose los hosts son los nombres de servicio.
+      URL_BASE_DATOS: postgresql+psycopg://cedis:cedis@postgres:5432/cedis
+      URL_REDIS: redis://redis:6379/0
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/salud')"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: cedis-postgres
+    environment:
+      POSTGRES_USER: cedis
+      POSTGRES_PASSWORD: cedis
+      POSTGRES_DB: cedis
+    ports:
+      - "5432:5432"
+    volumes:
+      - datos_postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U cedis -d cedis"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  redis:
+    # Redis Streams para la cola de eventos de escaneo.
+    image: redis:7-alpine
+    container_name: cedis-redis
+    command: redis-server --appendonly yes
+    ports:
+      - "6379:6379"
+    volumes:
+      - datos_redis:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+volumes:
+  datos_postgres:
+  datos_redis:

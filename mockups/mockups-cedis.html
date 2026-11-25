@@ -1,0 +1,1007 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Prototipo CEDIS — Mockups</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<style>
+  :root {
+    --ink: #16181D;
+    --ink-2: #2B2F38;
+    --mute: #5B6170;
+    --mute-2: #6B7280;
+    --line: #DFE1E6;
+    --line-2: #C9CDD4;
+    --surface: #FFFFFF;
+    --ground: #F2F2F0;
+    --blue: #1F5FD0;
+    --blue-dk: #17479C;
+    --green: #0F7B4F;
+    --red: #C02626;
+    --amber: #B45309;
+    --amber-bg: #FDF6EC;
+    --amber-line: #E8C89A;
+    --mono: 'JetBrains Mono', ui-monospace, monospace;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: Inter, system-ui, sans-serif;
+    background: #DCDCD8;
+    color: var(--ink);
+    padding: 40px 24px 80px;
+  }
+  .wrap { max-width: 1480px; margin: 0 auto; }
+  .page-head { margin-bottom: 48px; }
+  .page-head h1 { margin: 0 0 8px; font-size: 34px; font-weight: 700; letter-spacing: -1px; }
+  .page-head p { margin: 0; font-size: 14px; color: var(--mute); max-width: 72ch; line-height: 1.6; }
+  .sect-title {
+    margin: 64px 0 20px;
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.4px;
+    color: var(--mute);
+  }
+  .sect-title:first-of-type { margin-top: 0; }
+  .frame {
+    background: var(--surface);
+    border-radius: 10px;
+    box-shadow: 0 1px 3px rgba(0,0,0,.09), 0 8px 24px rgba(0,0,0,.07);
+    overflow: hidden;
+  }
+  .frame-name {
+    font-size: 11.5px;
+    font-weight: 600;
+    color: #4A4F5A;
+    margin-bottom: 7px;
+    letter-spacing: 0.1px;
+  }
+  .row { display: flex; flex-wrap: wrap; gap: 32px; align-items: flex-start; }
+  .mono { font-family: var(--mono); }
+  .tnum { font-variant-numeric: tabular-nums; }
+
+  .phone {
+    width: 360px;
+    border-radius: 26px;
+    background: #16181D;
+    padding: 9px;
+    box-shadow: 0 2px 6px rgba(0,0,0,.14), 0 14px 36px rgba(0,0,0,.14);
+  }
+  .phone-screen {
+    border-radius: 18px;
+    overflow: hidden;
+    background: var(--ground);
+    height: 700px;
+    display: flex;
+    flex-direction: column;
+  }
+  .hh-bar {
+    background: #16181D;
+    color: #fff;
+    padding: 9px 13px;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    font-size: 11px;
+  }
+  .hh-bar .dot { width: 7px; height: 7px; border-radius: 999px; }
+
+  .lbl {
+    font-size: 10.5px;
+    font-weight: 600;
+    color: var(--mute);
+    text-transform: uppercase;
+    letter-spacing: 0.45px;
+  }
+  .card { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; }
+  button { font-family: inherit; cursor: pointer; }
+  .btn-primary {
+    font-size: 13px; font-weight: 600; color: #fff; background: var(--blue);
+    border: none; border-radius: 7px; padding: 12px 20px; min-height: 44px;
+  }
+  .btn-ghost {
+    font-size: 13px; font-weight: 500; color: var(--ink); background: #fff;
+    border: 1px solid var(--line-2); border-radius: 7px; padding: 12px 18px; min-height: 44px;
+  }
+  table { border-collapse: collapse; width: 100%; }
+  .doc {
+    width: 816px;
+    min-height: 1056px;
+    padding: 56px 54px;
+    background: #fff;
+    font-size: 11.5px;
+    line-height: 1.5;
+  }
+  @media (max-width: 900px) {
+    .doc { width: 100%; min-height: 0; padding: 32px 24px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="page-head">
+    <h1>Prototipo CEDIS — Mockups</h1>
+    <p>Las seis pantallas del alcance mínimo demostrable de la propuesta v2. Los datos son sintéticos y consistentes entre pantallas: <span class="mono">OC-88213</span> del proveedor <span class="mono">PRV-0147</span>, con destino a seis sucursales.</p>
+  </header>
+
+  <!-- ===================== 1 · AGENDAMIENTO ===================== -->
+  <h2 class="sect-title">1 · Agendamiento — Portal de proveedores</h2>
+
+  <div class="frame-name">Portal de proveedores · reserva de andén</div>
+  <div class="frame">
+    <header style="background:#16181D;color:#fff;padding:14px 28px;display:flex;flex-wrap:wrap;gap:20px;align-items:center">
+      <div style="display:flex;align-items:center;gap:12px;flex-grow:1;min-width:0">
+        <div style="width:30px;height:30px;border:2px solid #D8DADF;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;letter-spacing:-.5px">CD</div>
+        <div>
+          <div style="font-size:14px;font-weight:600">CEDIS · Portal de Proveedores</div>
+          <div style="font-size:11px;color:#A9AEB8;margin-top:1px">Agendamiento de entregas en andén</div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:16px">
+        <div style="text-align:right">
+          <div style="font-size:12px;font-weight:500">Alimentos del Golfo, S.A. de C.V.</div>
+          <div class="mono" style="font-size:10px;color:#A9AEB8;margin-top:1px">PRV-0147</div>
+        </div>
+        <div style="background:var(--green);color:#fff;padding:5px 11px;border-radius:999px;font-size:11px;font-weight:600;white-space:nowrap">Score 94 · Preferente</div>
+      </div>
+    </header>
+
+    <nav aria-label="Avance del registro" style="background:#fff;border-bottom:1px solid var(--line);padding:0 28px;display:flex;flex-wrap:wrap;gap:28px">
+      <div style="padding:13px 0;border-bottom:2px solid var(--blue);display:flex;align-items:center;gap:8px">
+        <span style="width:19px;height:19px;border-radius:999px;background:var(--blue);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center">1</span>
+        <span style="font-size:13px;font-weight:600">OC y CFDI</span>
+      </div>
+      <div style="padding:13px 0;border-bottom:2px solid var(--blue);display:flex;align-items:center;gap:8px">
+        <span style="width:19px;height:19px;border-radius:999px;background:var(--blue);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center">2</span>
+        <span style="font-size:13px;font-weight:600">Desglose por bulto</span>
+      </div>
+      <div style="padding:13px 0;border-bottom:2px solid var(--ink);display:flex;align-items:center;gap:8px">
+        <span style="width:19px;height:19px;border-radius:999px;background:var(--ink);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center">3</span>
+        <span style="font-size:13px;font-weight:700">Reservar andén</span>
+      </div>
+      <div style="padding:13px 0;display:flex;align-items:center;gap:8px">
+        <span style="width:19px;height:19px;border-radius:999px;background:#E6E8EC;color:var(--mute-2);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center">4</span>
+        <span style="font-size:13px;color:var(--mute-2)">Descargar etiquetas</span>
+      </div>
+    </nav>
+
+    <div style="background:var(--ground);padding:24px 28px 30px;display:flex;flex-wrap:wrap;gap:24px;align-items:flex-start">
+
+      <section style="flex:1 1 360px;min-width:0;display:flex;flex-direction:column;gap:16px">
+        <div class="card" style="padding:20px">
+          <h3 style="margin:0 0 16px;font-size:14px;font-weight:700">Orden de compra y comprobante fiscal</h3>
+          <div style="display:flex;flex-direction:column;gap:14px">
+            <div>
+              <label class="lbl" for="f-oc" style="display:block;margin-bottom:5px">Orden de compra</label>
+              <input id="f-oc" class="mono" type="text" value="OC-88213" readonly
+                style="width:100%;font-size:14px;font-weight:500;padding:9px 11px;border:1px solid var(--line-2);border-radius:6px;background:#FAFAF9;color:var(--ink)">
+              <p style="margin:6px 0 0;font-size:11px;color:var(--mute)">148 bultos esperados · 32 SKU · destino 6 sucursales</p>
+            </div>
+            <div>
+              <label class="lbl" for="f-uuid" style="display:block;margin-bottom:5px">UUID del CFDI 4.0</label>
+              <input id="f-uuid" class="mono" type="text" value="3F2A9C41-7B8D-4E55-9A12-C6D80F4B1E77"
+                style="width:100%;font-size:12px;padding:9px 11px;border:1px solid var(--green);border-radius:6px;background:#fff;color:var(--ink)">
+              <p style="margin:6px 0 0;font-size:11px;color:var(--green);font-weight:600">Vigente en el SAT · folio no duplicado en el CEDIS</p>
+            </div>
+            <div>
+              <span class="lbl" style="display:block;margin-bottom:5px">Desglose por bulto</span>
+              <div style="border:1px solid var(--line-2);border-radius:6px;padding:11px;background:#FAFAF9;display:flex;gap:11px;align-items:center">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#5B6170" stroke-width="1.8" aria-hidden="true"><path d="M14 3v5h5M7 3h8l5 5v13H7z"/></svg>
+                <div style="min-width:0">
+                  <div class="mono" style="font-size:11px;font-weight:500;overflow-wrap:anywhere">desglose_OC-88213.xml</div>
+                  <div style="font-size:11px;color:var(--mute);margin-top:2px">148 bultos · 62 tarimas eq. · 11,840 kg · 26.1 m³</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" style="padding:20px">
+          <h3 style="margin:0 0 13px;font-size:14px;font-weight:700">Validaciones del sistema</h3>
+          <ul style="margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:10px">
+            <li style="display:flex;gap:10px;align-items:flex-start">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#0F7B4F" stroke-width="2.6" style="flex-shrink:0;margin-top:1px" aria-hidden="true"><path d="M4 12.5l5.5 5.5L20 6.5"/></svg>
+              <span style="font-size:12.5px;line-height:1.45">Folio fiscal único — no existe otra OC con este UUID</span>
+            </li>
+            <li style="display:flex;gap:10px;align-items:flex-start">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#0F7B4F" stroke-width="2.6" style="flex-shrink:0;margin-top:1px" aria-hidden="true"><path d="M4 12.5l5.5 5.5L20 6.5"/></svg>
+              <span style="font-size:12.5px;line-height:1.45">Pureza por bulto — 1 solo SKU en cada una de las 148 cajas</span>
+            </li>
+            <li style="display:flex;gap:10px;align-items:flex-start">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#0F7B4F" stroke-width="2.6" style="flex-shrink:0;margin-top:1px" aria-hidden="true"><path d="M4 12.5l5.5 5.5L20 6.5"/></svg>
+              <span style="font-size:12.5px;line-height:1.45">Sucursal destino válida en 148 / 148 bultos</span>
+            </li>
+            <li style="display:flex;gap:10px;align-items:flex-start">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#B45309" stroke-width="2.2" style="flex-shrink:0;margin-top:1px" aria-hidden="true"><path d="M12 4v10"/><circle cx="12" cy="19" r="1.4" fill="#B45309" stroke="none"/></svg>
+              <span style="font-size:12.5px;line-height:1.45"><strong style="font-weight:600">4 bultos sin volumen declarado</strong> — se calcularán por tarima estándar (2.38 m³)</span>
+            </li>
+          </ul>
+        </div>
+
+        <div class="card" style="padding:18px 20px">
+          <h3 style="margin:0 0 11px;font-size:14px;font-weight:700">Duración calculada por el sistema</h3>
+          <div style="display:flex;align-items:baseline;gap:9px">
+            <span class="tnum" style="font-size:30px;font-weight:700;letter-spacing:-1px">2 h 30</span>
+            <span style="font-size:12px;color:var(--mute)">min de andén</span>
+          </div>
+          <p class="mono" style="margin:9px 0 0;font-size:11px;color:var(--mute);line-height:1.5">t = max(60, 12 + 0.9 × 148) = 145 min<br>→ se reserva el bloque de 150 min</p>
+          <p style="margin:10px 0 0;font-size:11.5px;color:var(--mute);line-height:1.5">Puede solicitar <strong style="font-weight:600;color:var(--ink)">más</strong> tiempo, nunca menos. Tolerancia de llegada: 15 min.</p>
+        </div>
+      </section>
+
+      <section class="card" style="flex:999 1 560px;min-width:0;padding:20px">
+        <div style="display:flex;flex-wrap:wrap;gap:12px;align-items:baseline;justify-content:space-between;margin-bottom:6px">
+          <h3 style="margin:0;font-size:14px;font-weight:700">Disponibilidad de andenes</h3>
+          <span style="font-size:12px;color:var(--mute)">jueves 26 de noviembre de 2026</span>
+        </div>
+        <p style="margin:0 0 14px;font-size:11.5px;color:var(--mute)">Capacidad del día: 36 citas · 31 reservadas · 5 libres</p>
+
+        <div style="display:flex;flex-wrap:wrap;gap:16px;margin-bottom:13px;font-size:11px;color:var(--mute)">
+          <span style="display:inline-flex;align-items:center;gap:6px"><span style="width:11px;height:11px;border-radius:2px;background:#D3D7DE"></span>Reservado</span>
+          <span style="display:inline-flex;align-items:center;gap:6px"><span style="width:11px;height:11px;border-radius:2px;background:var(--blue)"></span>Su cita</span>
+          <span style="display:inline-flex;align-items:center;gap:6px"><span style="width:11px;height:11px;border-radius:2px;background:#fff;border:1px solid var(--line-2)"></span>Libre</span>
+          <span style="display:inline-flex;align-items:center;gap:6px"><span style="width:11px;height:11px;border-radius:2px;background:#EDEEF0;border:1px solid var(--line-2)"></span>Cerrado</span>
+        </div>
+
+        <div style="overflow-x:auto">
+          <div style="min-width:520px">
+            <div style="display:grid;grid-template-columns:54px repeat(5,minmax(0,1fr));gap:6px;margin-bottom:6px">
+              <div></div>
+              <div style="font-size:11px;font-weight:600;text-align:center">Andén 1</div>
+              <div style="font-size:11px;font-weight:600;text-align:center">Andén 2</div>
+              <div style="font-size:11px;font-weight:600;text-align:center">Andén 3</div>
+              <div style="font-size:11px;font-weight:600;text-align:center">Andén 4</div>
+              <div style="font-size:11px;font-weight:700;text-align:center;color:var(--blue)">Andén 5 flex</div>
+            </div>
+            <div id="grid-andenes" style="display:grid;grid-template-columns:54px repeat(5,minmax(0,1fr));grid-template-rows:repeat(20,20px);gap:2px 6px"></div>
+          </div>
+        </div>
+
+        <div style="margin-top:15px;background:var(--amber-bg);border:1px solid var(--amber-line);border-left:3px solid var(--amber);border-radius:6px;padding:11px 13px;display:flex;gap:10px">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#B45309" stroke-width="2.2" style="flex-shrink:0;margin-top:1px" aria-hidden="true"><path d="M12 4v10"/><circle cx="12" cy="19" r="1.4" fill="#B45309" stroke="none"/></svg>
+          <p style="margin:0;font-size:12px;line-height:1.5;color:#4A3410">El horario que solicitó originalmente (<strong style="font-weight:600">Andén 2, 10:00</strong>) se traslapa con la cita de Kimberly Clark. El sistema reubicó su entrega en el <strong style="font-weight:600">Andén 5 flex</strong>, disponible a recibo de 8:00 a 13:00.</p>
+        </div>
+
+        <div style="margin-top:17px;padding-top:17px;border-top:1px solid var(--line);display:flex;flex-wrap:wrap;gap:11px;align-items:center">
+          <button type="button" class="btn-primary">Confirmar cita y generar pase QR</button>
+          <button type="button" class="btn-ghost">Ver otro día</button>
+          <span style="font-size:11.5px;color:var(--mute)">Al confirmar se liberan las 148 etiquetas QR firmadas</span>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <!-- ===================== 2 y 3 · IDENTIFICACIÓN Y RECEPCIÓN ===================== -->
+  <h2 class="sect-title">2 y 3 · Identificación y recepción</h2>
+
+  <div class="row">
+
+    <div>
+      <div class="frame-name">Etiqueta 4″ × 6″ · QR firmado</div>
+      <div class="frame" style="width:384px;padding:18px;display:flex;flex-direction:column;gap:12px;border:1px solid var(--line-2)">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid var(--ink);padding-bottom:9px">
+          <div>
+            <div style="font-size:9px;font-weight:700;letter-spacing:1px;color:var(--mute)">SUCURSAL DESTINO</div>
+            <div style="font-size:38px;font-weight:700;letter-spacing:-1.5px;line-height:1">SUC-14</div>
+            <div style="font-size:11px;font-weight:500;margin-top:1px">Plaza Oriente</div>
+          </div>
+          <div style="text-align:right">
+            <div style="font-size:9px;font-weight:700;letter-spacing:1px;color:var(--mute)">BULTO</div>
+            <div class="mono" style="font-size:20px;font-weight:700">B00412</div>
+            <div style="font-size:9.5px;color:var(--mute);margin-top:2px">42 de 148</div>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:13px;align-items:flex-start">
+          <div style="flex-shrink:0"><svg id="qr-etiqueta" width="128" height="128" viewBox="0 0 29 29" shape-rendering="crispEdges" role="img" aria-label="Código QR del bulto B00412"></svg></div>
+          <div style="min-width:0;display:flex;flex-direction:column;gap:8px">
+            <div>
+              <div style="font-size:8.5px;font-weight:700;letter-spacing:.8px;color:var(--mute)">SKU</div>
+              <div class="mono" style="font-size:13px;font-weight:700">SKU-993201</div>
+              <div style="font-size:10px;line-height:1.3;margin-top:1px">Atún aleta amarilla en agua 140 g</div>
+            </div>
+            <div style="display:flex;gap:14px">
+              <div>
+                <div style="font-size:8.5px;font-weight:700;letter-spacing:.8px;color:var(--mute)">PIEZAS</div>
+                <div class="mono tnum" style="font-size:15px;font-weight:700">24</div>
+              </div>
+              <div>
+                <div style="font-size:8.5px;font-weight:700;letter-spacing:.8px;color:var(--mute)">PESO</div>
+                <div class="mono tnum" style="font-size:15px;font-weight:700">18.4 kg</div>
+              </div>
+              <div>
+                <div style="font-size:8.5px;font-weight:700;letter-spacing:.8px;color:var(--mute)">VOL.</div>
+                <div class="mono tnum" style="font-size:15px;font-weight:700">0.42 m³</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div style="border-top:1px solid var(--line-2);padding-top:9px;display:flex;flex-direction:column;gap:5px">
+          <div style="display:flex;justify-content:space-between;font-size:10px">
+            <span style="color:var(--mute)">Orden de compra</span><span class="mono" style="font-weight:600">OC-88213</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:10px">
+            <span style="color:var(--mute)">Proveedor</span><span class="mono" style="font-weight:600">PRV-0147</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:10px">
+            <span style="color:var(--mute)">Cita</span><span class="mono" style="font-weight:600">26-nov · 10:00 · And. 5</span>
+          </div>
+        </div>
+
+        <div style="background:#F4F5F7;border-radius:5px;padding:8px 9px">
+          <div style="font-size:8.5px;font-weight:700;letter-spacing:.8px;color:var(--mute);margin-bottom:3px">CONTENIDO DEL QR · FIRMADO</div>
+          <div class="mono" style="font-size:8.5px;line-height:1.45;overflow-wrap:anywhere;color:var(--ink-2)">v1|B00412|OC-88213|PRV-0147|SUC-14|SKU-993201|24|18.4|0.42|<strong style="color:var(--green)">K7QX4M2A</strong></div>
+        </div>
+        <p style="margin:0;font-size:9px;color:var(--mute);line-height:1.4">Los últimos 8 caracteres son el HMAC-SHA256 truncado. Una etiqueta fotocopiada o emitida fuera del sistema se rechaza en el andén.</p>
+      </div>
+    </div>
+
+    <div>
+      <div class="frame-name">Handheld · bulto aceptado</div>
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="hh-bar">
+            <span class="dot" style="background:#0F7B4F"></span>
+            <span style="flex-grow:1">En línea · Andén 5</span>
+            <span class="mono">10:42</span>
+          </div>
+          <div style="background:#fff;padding:11px 14px;border-bottom:1px solid var(--line)">
+            <div style="display:flex;justify-content:space-between;align-items:baseline">
+              <span class="mono" style="font-size:12px;font-weight:700">OC-88213</span>
+              <span style="font-size:11px;color:var(--mute)">PRV-0147</span>
+            </div>
+            <div style="margin-top:7px;height:5px;background:#E6E8EC;border-radius:999px;overflow:hidden">
+              <div style="width:28%;height:100%;background:var(--blue)"></div>
+            </div>
+            <div style="display:flex;justify-content:space-between;margin-top:5px;font-size:10.5px;color:var(--mute)">
+              <span>42 de 148 bultos</span><span>0 rechazados</span>
+            </div>
+          </div>
+
+          <div style="background:#0F7B4F;color:#fff;padding:22px 16px;text-align:center">
+            <svg width="54" height="54" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" aria-hidden="true"><circle cx="12" cy="12" r="9.2"/><path d="M7.5 12.4l3.2 3.2L16.8 9"/></svg>
+            <div style="font-size:24px;font-weight:700;letter-spacing:-.5px;margin-top:8px">RECIBIDO</div>
+            <div class="mono" style="font-size:14px;margin-top:3px;opacity:.9">B00412</div>
+          </div>
+
+          <div style="flex-grow:1;padding:14px;display:flex;flex-direction:column;gap:11px;overflow:hidden">
+            <div class="card" style="padding:13px">
+              <div class="lbl" style="margin-bottom:7px">Acomodo dirigido</div>
+              <div style="display:flex;align-items:center;gap:10px">
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#1F5FD0" stroke-width="1.9" aria-hidden="true"><path d="M3 21V8l9-5 9 5v13M3 13h18M3 17h18M12 8v13"/></svg>
+                <div>
+                  <div class="mono" style="font-size:19px;font-weight:700;letter-spacing:-.4px">SUC14-N2-P05</div>
+                  <div style="font-size:10.5px;color:var(--mute);margin-top:1px">Rack 14 · nivel 2 · posición 5</div>
+                </div>
+              </div>
+            </div>
+
+            <div style="background:#EAF1FD;border:1px solid #B9CFF4;border-radius:9px;padding:12px">
+              <div style="display:flex;gap:9px;align-items:flex-start">
+                <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#17479C" stroke-width="2.1" style="flex-shrink:0;margin-top:1px" aria-hidden="true"><path d="M3 12h13M12 7l5 5-5 5M20 5v14"/></svg>
+                <div>
+                  <div style="font-size:12px;font-weight:700;color:var(--blue-dk)">Cross-dock disponible</div>
+                  <p style="margin:3px 0 0;font-size:11px;line-height:1.45;color:#1C3C70">SUC-14 tiene embarque abierto al 83%. Lleve el bulto directo al <strong>andén de salida 2</strong> en lugar del rack.</p>
+                </div>
+              </div>
+            </div>
+
+            <div style="display:flex;flex-direction:column;gap:5px;font-size:11px">
+              <div style="display:flex;justify-content:space-between"><span style="color:var(--mute)">SKU</span><span class="mono" style="font-weight:600">SKU-993201</span></div>
+              <div style="display:flex;justify-content:space-between"><span style="color:var(--mute)">Piezas</span><span class="mono tnum" style="font-weight:600">24 de 24</span></div>
+              <div style="display:flex;justify-content:space-between"><span style="color:var(--mute)">Firma del QR</span><span style="font-weight:600;color:var(--green)">válida</span></div>
+            </div>
+          </div>
+
+          <div style="padding:12px 14px;background:#fff;border-top:1px solid var(--line)">
+            <button type="button" style="width:100%;font-size:15px;font-weight:600;color:#fff;background:var(--ink);border:none;border-radius:9px;padding:15px;min-height:52px">Escanear siguiente</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="frame-name">Handheld · rechazo por excedente</div>
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="hh-bar">
+            <span class="dot" style="background:#0F7B4F"></span>
+            <span style="flex-grow:1">En línea · Andén 5</span>
+            <span class="mono">10:47</span>
+          </div>
+          <div style="background:#fff;padding:11px 14px;border-bottom:1px solid var(--line)">
+            <div style="display:flex;justify-content:space-between;align-items:baseline">
+              <span class="mono" style="font-size:12px;font-weight:700">OC-88213</span>
+              <span style="font-size:11px;color:var(--mute)">PRV-0147</span>
+            </div>
+            <div style="margin-top:7px;height:5px;background:#E6E8EC;border-radius:999px;overflow:hidden">
+              <div style="width:31%;height:100%;background:var(--blue)"></div>
+            </div>
+            <div style="display:flex;justify-content:space-between;margin-top:5px;font-size:10.5px;color:var(--mute)">
+              <span>46 de 148 bultos</span><span style="color:var(--red);font-weight:600">1 rechazado</span>
+            </div>
+          </div>
+
+          <div style="background:#C02626;color:#fff;padding:22px 16px;text-align:center">
+            <svg width="54" height="54" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" aria-hidden="true"><circle cx="12" cy="12" r="9.2"/><path d="M8.3 8.3l7.4 7.4M15.7 8.3l-7.4 7.4"/></svg>
+            <div style="font-size:24px;font-weight:700;letter-spacing:-.5px;margin-top:8px">NO SE RECIBE</div>
+            <div class="mono" style="font-size:14px;margin-top:3px;opacity:.9">B00447</div>
+          </div>
+
+          <div style="flex-grow:1;padding:14px;display:flex;flex-direction:column;gap:11px;overflow:hidden">
+            <div style="background:#FCEDED;border:1px solid #F0BDBD;border-radius:9px;padding:13px">
+              <div class="lbl" style="color:#8A1A1A;margin-bottom:6px">Motivo</div>
+              <div style="font-size:14px;font-weight:700;color:#8A1A1A;line-height:1.3">Excedente sobre la orden de compra</div>
+              <p style="margin:7px 0 0;font-size:11.5px;line-height:1.5;color:#6B1515">La OC autoriza <strong>480 piezas</strong> del SKU-993201 y ya se recibieron <strong>480</strong>. Este bulto agrega 24 piezas no solicitadas.</p>
+            </div>
+
+            <div class="card" style="padding:13px">
+              <div style="display:flex;flex-direction:column;gap:6px;font-size:11.5px">
+                <div style="display:flex;justify-content:space-between"><span style="color:var(--mute)">SKU escaneado</span><span class="mono" style="font-weight:600">SKU-993201</span></div>
+                <div style="display:flex;justify-content:space-between"><span style="color:var(--mute)">Autorizado en OC</span><span class="mono tnum" style="font-weight:600">480 pz</span></div>
+                <div style="display:flex;justify-content:space-between"><span style="color:var(--mute)">Ya recibido</span><span class="mono tnum" style="font-weight:600">480 pz</span></div>
+                <div style="display:flex;justify-content:space-between;padding-top:6px;border-top:1px solid var(--line)"><span style="color:var(--mute)">Excedente</span><span class="mono tnum" style="font-weight:700;color:var(--red)">+24 pz</span></div>
+              </div>
+            </div>
+
+            <div style="background:#F4F5F7;border-radius:9px;padding:12px">
+              <div style="display:flex;gap:9px;align-items:flex-start">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2B2F38" stroke-width="2" style="flex-shrink:0;margin-top:1px" aria-hidden="true"><path d="M14 3v5h5M7 3h8l5 5v13H7z"/><path d="M10 13h6M10 17h4"/></svg>
+                <div>
+                  <div style="font-size:12px;font-weight:700">Acta ACT-2026-0391</div>
+                  <p style="margin:3px 0 0;font-size:11px;line-height:1.45;color:var(--mute)">Generada automáticamente. Se notificó a Compras y al proveedor. El bulto regresa a la unidad.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div style="padding:12px 14px;background:#fff;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:8px">
+            <button type="button" style="width:100%;font-size:15px;font-weight:600;color:#fff;background:var(--ink);border:none;border-radius:9px;padding:15px;min-height:52px">Devolver y continuar</button>
+            <button type="button" style="width:100%;font-size:13px;font-weight:500;color:var(--ink);background:#fff;border:1px solid var(--line-2);border-radius:9px;padding:12px;min-height:44px">Llamar al jefe de recibo</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="frame-name">Handheld · modo sin red</div>
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="hh-bar" style="background:#B45309">
+            <span class="dot" style="background:#fff"></span>
+            <span style="flex-grow:1;font-weight:600">Sin red · operando local</span>
+            <span class="mono">11:03</span>
+          </div>
+          <div style="background:#fff;padding:11px 14px;border-bottom:1px solid var(--line)">
+            <div style="display:flex;justify-content:space-between;align-items:baseline">
+              <span class="mono" style="font-size:12px;font-weight:700">OC-88213</span>
+              <span style="font-size:11px;color:var(--mute)">PRV-0147</span>
+            </div>
+            <div style="margin-top:7px;height:5px;background:#E6E8EC;border-radius:999px;overflow:hidden">
+              <div style="width:64%;height:100%;background:var(--blue)"></div>
+            </div>
+            <div style="display:flex;justify-content:space-between;margin-top:5px;font-size:10.5px;color:var(--mute)">
+              <span>95 de 148 bultos</span><span style="color:var(--red);font-weight:600">1 rechazado</span>
+            </div>
+          </div>
+
+          <div style="background:var(--amber-bg);border-bottom:1px solid var(--amber-line);padding:14px">
+            <div style="display:flex;gap:10px;align-items:flex-start">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#B45309" stroke-width="2.2" style="flex-shrink:0;margin-top:1px" aria-hidden="true"><path d="M12 4v10"/><circle cx="12" cy="19" r="1.4" fill="#B45309" stroke="none"/></svg>
+              <div>
+                <div style="font-size:13px;font-weight:700;color:#4A3410">La recepción continúa</div>
+                <p style="margin:3px 0 0;font-size:11.5px;line-height:1.5;color:#4A3410">La OC y las 148 etiquetas esperadas están en el equipo. La validación de firma, SKU y cantidad se hace localmente.</p>
+              </div>
+            </div>
+          </div>
+
+          <div style="flex-grow:1;padding:14px;display:flex;flex-direction:column;gap:11px;overflow:hidden">
+            <div class="card" style="padding:13px">
+              <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px">
+                <span class="lbl">Cola de sincronización</span>
+                <span class="mono tnum" style="font-size:17px;font-weight:700">37</span>
+              </div>
+              <ul style="margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:7px">
+                <li style="display:flex;justify-content:space-between;align-items:center;font-size:11px">
+                  <span class="mono">B00498 · RECIBIDO</span><span style="color:var(--amber);font-weight:600">pendiente</span>
+                </li>
+                <li style="display:flex;justify-content:space-between;align-items:center;font-size:11px">
+                  <span class="mono">B00497 · RECIBIDO</span><span style="color:var(--amber);font-weight:600">pendiente</span>
+                </li>
+                <li style="display:flex;justify-content:space-between;align-items:center;font-size:11px">
+                  <span class="mono">B00496 · RECIBIDO</span><span style="color:var(--amber);font-weight:600">pendiente</span>
+                </li>
+                <li style="display:flex;justify-content:space-between;align-items:center;font-size:11px">
+                  <span class="mono">B00447 · RECHAZADO</span><span style="color:var(--amber);font-weight:600">pendiente</span>
+                </li>
+                <li style="display:flex;justify-content:space-between;align-items:center;font-size:11px;padding-top:7px;border-top:1px solid var(--line)">
+                  <span class="mono" style="color:var(--mute)">B00446 · RECIBIDO</span><span style="color:var(--green);font-weight:600">sincronizado</span>
+                </li>
+              </ul>
+              <p style="margin:10px 0 0;font-size:10.5px;line-height:1.45;color:var(--mute)">Cada evento lleva su propio identificador. Al reconectar no se duplica nada, aunque el mismo QR se haya escaneado dos veces.</p>
+            </div>
+
+            <div style="display:flex;flex-direction:column;gap:5px;font-size:11px">
+              <div style="display:flex;justify-content:space-between"><span style="color:var(--mute)">Última sincronía</span><span class="mono">10:51:08</span></div>
+              <div style="display:flex;justify-content:space-between"><span style="color:var(--mute)">Autonomía local</span><span class="mono">8 h</span></div>
+              <div style="display:flex;justify-content:space-between"><span style="color:var(--mute)">Reintento en</span><span class="mono">0:14</span></div>
+            </div>
+          </div>
+
+          <div style="padding:12px 14px;background:#fff;border-top:1px solid var(--line)">
+            <button type="button" style="width:100%;font-size:15px;font-weight:600;color:#fff;background:var(--ink);border:none;border-radius:9px;padding:15px;min-height:52px">Escanear siguiente</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ===================== 4 · CONSOLIDACIÓN ===================== -->
+  <h2 class="sect-title">4 · Consolidación y embarque</h2>
+
+  <div class="frame-name">Tablero del jefe de embarques</div>
+  <div class="frame">
+    <header style="background:#16181D;color:#fff;padding:14px 28px;display:flex;flex-wrap:wrap;gap:18px;align-items:center">
+      <div style="flex-grow:1;min-width:0">
+        <div style="font-size:14px;font-weight:600">Consolidación por sucursal</div>
+        <div style="font-size:11px;color:#A9AEB8;margin-top:1px">26 de noviembre de 2026 · 15:20 · 3 andenes de embarque</div>
+      </div>
+      <div style="display:flex;gap:26px">
+        <div><div style="font-size:10px;color:#A9AEB8">Listas para salir</div><div class="tnum" style="font-size:20px;font-weight:700">6</div></div>
+        <div><div style="font-size:10px;color:#A9AEB8">Alerta 36 h</div><div class="tnum" style="font-size:20px;font-weight:700;color:#F0A35C">3</div></div>
+        <div><div style="font-size:10px;color:#A9AEB8">Tarimas en rack</div><div class="tnum" style="font-size:20px;font-weight:700">312</div></div>
+        <div><div style="font-size:10px;color:#A9AEB8">Ocupación</div><div class="tnum" style="font-size:20px;font-weight:700">30%</div></div>
+      </div>
+    </header>
+
+    <div style="background:var(--ground);padding:20px 28px 28px">
+      <div style="display:flex;flex-wrap:wrap;gap:16px;margin-bottom:16px;font-size:11.5px;color:var(--mute);align-items:center">
+        <span style="font-weight:600;color:var(--ink)">Regla de liberación:</span>
+        <span style="display:inline-flex;align-items:center;gap:6px"><span style="width:11px;height:11px;border-radius:2px;background:#0F7B4F"></span>≥ 90% — liberar</span>
+        <span style="display:inline-flex;align-items:center;gap:6px"><span style="width:11px;height:11px;border-radius:2px;background:#B45309"></span>&lt; 90% pero ≥ 36 h — excepción</span>
+        <span style="display:inline-flex;align-items:center;gap:6px"><span style="width:11px;height:11px;border-radius:2px;background:#B9CFF4"></span>acumulando</span>
+      </div>
+
+      <div style="overflow-x:auto" class="card">
+        <table style="min-width:900px;font-size:12px">
+          <thead>
+            <tr style="background:#FAFAF9;border-bottom:1px solid var(--line)">
+              <th style="text-align:left;padding:11px 14px;font-size:10.5px;font-weight:600;color:#5B6170;text-transform:uppercase;letter-spacing:.45px">Sucursal</th>
+              <th style="text-align:right;padding:11px 10px;font-size:10.5px;font-weight:600;color:#5B6170;text-transform:uppercase;letter-spacing:.45px">Tarimas</th>
+              <th style="text-align:right;padding:11px 10px;font-size:10.5px;font-weight:600;color:#5B6170;text-transform:uppercase;letter-spacing:.45px">Peso</th>
+              <th style="text-align:left;padding:11px 14px;font-size:10.5px;font-weight:600;color:#5B6170;text-transform:uppercase;letter-spacing:.45px;width:210px">Ocupación</th>
+              <th style="text-align:left;padding:11px 10px;font-size:10.5px;font-weight:600;color:#5B6170;text-transform:uppercase;letter-spacing:.45px">Unidad sugerida</th>
+              <th style="text-align:right;padding:11px 10px;font-size:10.5px;font-weight:600;color:#5B6170;text-transform:uppercase;letter-spacing:.45px">Antigüedad</th>
+              <th style="text-align:right;padding:11px 14px;font-size:10.5px;font-weight:600;color:#5B6170;text-transform:uppercase;letter-spacing:.45px">Acción</th>
+            </tr>
+          </thead>
+          <tbody id="tbody-consolidacion"></tbody>
+        </table>
+      </div>
+
+      <div style="margin-top:18px;display:flex;flex-wrap:wrap;gap:16px;align-items:stretch">
+        <div class="card" style="flex:1 1 320px;padding:16px 18px">
+          <h3 style="margin:0 0 11px;font-size:13px;font-weight:700">Por qué la unidad cambia</h3>
+          <p style="margin:0 0 10px;font-size:11.5px;line-height:1.55;color:var(--mute)">El 90% no se alcanza esperando, se alcanza eligiendo la unidad más chica que acomode lo acumulado. Así la sucursal de bajo volumen sale en 2 días y no en 4.</p>
+          <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px">
+            <div style="background:#FAFAF9;border:1px solid var(--line);border-radius:7px;padding:10px">
+              <div style="font-size:11px;font-weight:700">Tortón</div>
+              <div class="mono tnum" style="font-size:16px;font-weight:700;margin-top:2px">12</div>
+              <div style="font-size:10px;color:var(--mute)">tarimas · 90% = 11</div>
+            </div>
+            <div style="background:#FAFAF9;border:1px solid var(--line);border-radius:7px;padding:10px">
+              <div style="font-size:11px;font-weight:700">Rabón</div>
+              <div class="mono tnum" style="font-size:16px;font-weight:700;margin-top:2px">6</div>
+              <div style="font-size:10px;color:var(--mute)">tarimas · 90% = 6</div>
+            </div>
+            <div style="background:#FAFAF9;border:1px solid var(--line);border-radius:7px;padding:10px">
+              <div style="font-size:11px;font-weight:700">3.5 t</div>
+              <div class="mono tnum" style="font-size:16px;font-weight:700;margin-top:2px">3</div>
+              <div style="font-size:10px;color:var(--mute)">tarimas · 90% = 3</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" style="flex:1 1 320px;padding:16px 18px">
+          <h3 style="margin:0 0 11px;font-size:13px;font-weight:700">Andenes de salida</h3>
+          <div style="display:flex;flex-direction:column;gap:9px">
+            <div style="display:flex;align-items:center;gap:11px;padding:9px 11px;background:#FAFAF9;border:1px solid var(--line);border-radius:7px">
+              <span style="font-size:11px;font-weight:700;width:52px">Salida 1</span>
+              <span style="flex-grow:1;font-size:11.5px">SUC-03 · Tortón · cargando</span>
+              <span class="mono tnum" style="font-size:11px;color:var(--mute)">9 / 11</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:11px;padding:9px 11px;background:#EAF1FD;border:1px solid #B9CFF4;border-radius:7px">
+              <span style="font-size:11px;font-weight:700;width:52px">Salida 2</span>
+              <span style="flex-grow:1;font-size:11.5px">SUC-14 · Tortón · <strong>cross-dock activo</strong></span>
+              <span class="mono tnum" style="font-size:11px;color:var(--blue-dk);font-weight:600">10 / 11</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:11px;padding:9px 11px;background:#FAFAF9;border:1px dashed var(--line-2);border-radius:7px">
+              <span style="font-size:11px;font-weight:700;width:52px">Salida 3</span>
+              <span style="flex-grow:1;font-size:11.5px;color:var(--mute)">libre</span>
+              <span class="mono" style="font-size:11px;color:var(--mute)">—</span>
+            </div>
+          </div>
+          <p style="margin:11px 0 0;font-size:11px;line-height:1.5;color:var(--mute)">De 8:00 a 13:00 la Salida 3 opera como <strong style="color:var(--ink)">Andén 5 flex</strong> para recibo, lo que sube la capacidad de 32 a 36 citas diarias.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== 5 y 6 · DOCUMENTOS ===================== -->
+  <h2 class="sect-title">5 y 6 · Documentos de salida</h2>
+
+  <div class="row">
+
+    <div>
+      <div class="frame-name">Relación de Embarque · carta</div>
+      <div class="frame doc">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;border-bottom:3px solid var(--ink);padding-bottom:14px">
+          <div>
+            <div style="font-size:21px;font-weight:700;letter-spacing:-.6px">RELACIÓN DE EMBARQUE</div>
+            <div style="font-size:11px;color:var(--mute);margin-top:3px">Centro de Distribución · Salida a sucursal</div>
+            <div class="mono" style="font-size:15px;font-weight:700;margin-top:9px">REL-2026-01184</div>
+          </div>
+          <div style="text-align:center">
+            <svg id="qr-relacion" width="104" height="104" viewBox="0 0 29 29" shape-rendering="crispEdges" role="img" aria-label="Código QR maestro del embarque REL-2026-01184"></svg>
+            <div style="font-size:8.5px;color:var(--mute);margin-top:4px;font-weight:600;letter-spacing:.4px">QR MAESTRO</div>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 28px;margin-top:16px">
+          <div style="display:flex;flex-direction:column;gap:7px">
+            <div style="display:flex;justify-content:space-between;border-bottom:1px dotted var(--line-2);padding-bottom:4px"><span style="color:var(--mute)">Sucursal destino</span><strong>SUC-14 · Plaza Oriente</strong></div>
+            <div style="display:flex;justify-content:space-between;border-bottom:1px dotted var(--line-2);padding-bottom:4px"><span style="color:var(--mute)">Fecha y hora de salida</span><strong>26-nov-2026 · 15:48</strong></div>
+            <div style="display:flex;justify-content:space-between;border-bottom:1px dotted var(--line-2);padding-bottom:4px"><span style="color:var(--mute)">Andén de embarque</span><strong>Salida 2</strong></div>
+            <div style="display:flex;justify-content:space-between;border-bottom:1px dotted var(--line-2);padding-bottom:4px"><span style="color:var(--mute)">Clase de unidad</span><strong>Tortón · 12 posiciones</strong></div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:7px">
+            <div style="display:flex;justify-content:space-between;border-bottom:1px dotted var(--line-2);padding-bottom:4px"><span style="color:var(--mute)">Placas</span><strong class="mono">AB-472-TR</strong></div>
+            <div style="display:flex;justify-content:space-between;border-bottom:1px dotted var(--line-2);padding-bottom:4px"><span style="color:var(--mute)">Operador</span><strong>J. Martínez Ruiz</strong></div>
+            <div style="display:flex;justify-content:space-between;border-bottom:1px dotted var(--line-2);padding-bottom:4px"><span style="color:var(--mute)">Sello de seguridad</span><strong class="mono">SL-0099781</strong></div>
+            <div style="display:flex;justify-content:space-between;border-bottom:1px dotted var(--line-2);padding-bottom:4px"><span style="color:var(--mute)">Kilometraje de salida</span><strong class="mono tnum">148,206 km</strong></div>
+          </div>
+        </div>
+
+        <div style="margin-top:18px;display:flex;gap:11px">
+          <div style="flex:1;background:#FAFAF9;border:1px solid var(--line);border-radius:7px;padding:11px">
+            <div style="font-size:9px;font-weight:700;letter-spacing:.7px;color:var(--mute)">POSICIONES</div>
+            <div class="tnum" style="font-size:19px;font-weight:700">11 / 12</div>
+            <div style="font-size:9.5px;color:var(--mute)">91.7%</div>
+          </div>
+          <div style="flex:1;background:#FAFAF9;border:1px solid var(--line);border-radius:7px;padding:11px">
+            <div style="font-size:9px;font-weight:700;letter-spacing:.7px;color:var(--mute)">PESO</div>
+            <div class="tnum" style="font-size:19px;font-weight:700">10,840</div>
+            <div style="font-size:9.5px;color:var(--mute)">de 12,000 kg</div>
+          </div>
+          <div style="flex:1;background:#FAFAF9;border:1px solid var(--line);border-radius:7px;padding:11px">
+            <div style="font-size:9px;font-weight:700;letter-spacing:.7px;color:var(--mute)">VOLUMEN</div>
+            <div class="tnum" style="font-size:19px;font-weight:700">26.2</div>
+            <div style="font-size:9.5px;color:var(--mute)">de 28.6 m³</div>
+          </div>
+          <div style="flex:1;background:#E9F5EF;border:1px solid #A8D5BF;border-radius:7px;padding:11px">
+            <div style="font-size:9px;font-weight:700;letter-spacing:.7px;color:#0B5A3A">REGLA 90%</div>
+            <div style="font-size:15px;font-weight:700;color:var(--green);margin-top:3px">CUMPLE</div>
+            <div style="font-size:9.5px;color:#0B5A3A">sin excepción</div>
+          </div>
+        </div>
+
+        <div style="margin-top:20px">
+          <div style="font-size:12px;font-weight:700;margin-bottom:8px">Detalle por tarima — 11 tarimas · 164 bultos</div>
+          <table style="font-size:10px">
+            <thead>
+              <tr style="border-bottom:1.5px solid var(--ink)">
+                <th style="text-align:left;padding:5px 4px;font-weight:700">Tarima</th>
+                <th style="text-align:left;padding:5px 4px;font-weight:700">Posición origen</th>
+                <th style="text-align:right;padding:5px 4px;font-weight:700">Bultos</th>
+                <th style="text-align:left;padding:5px 4px;font-weight:700">SKU principal</th>
+                <th style="text-align:right;padding:5px 4px;font-weight:700">Piezas</th>
+                <th style="text-align:right;padding:5px 4px;font-weight:700">Peso kg</th>
+                <th style="text-align:left;padding:5px 4px;font-weight:700">OC</th>
+              </tr>
+            </thead>
+            <tbody id="tbody-relacion"></tbody>
+            <tfoot>
+              <tr style="border-top:1.5px solid var(--ink);font-weight:700">
+                <td colspan="2" style="padding:6px 4px">Total</td>
+                <td class="tnum" style="text-align:right;padding:6px 4px">164</td>
+                <td></td>
+                <td class="tnum" style="text-align:right;padding:6px 4px">3,936</td>
+                <td class="tnum" style="text-align:right;padding:6px 4px">10,840</td>
+                <td></td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+
+        <div style="margin-top:16px;background:#FAFAF9;border:1px solid var(--line);border-radius:7px;padding:11px 13px">
+          <div style="font-size:9px;font-weight:700;letter-spacing:.7px;color:var(--mute);margin-bottom:4px">COMPLEMENTO CARTA PORTE 3.1</div>
+          <div style="display:flex;flex-wrap:wrap;gap:0 22px;font-size:10px;line-height:1.7">
+            <span style="color:var(--mute)">Permiso SICT: <strong class="mono" style="color:var(--ink)">TPAF01 / 0412-2024</strong></span>
+            <span style="color:var(--mute)">Config. vehicular: <strong class="mono" style="color:var(--ink)">C3</strong></span>
+            <span style="color:var(--mute)">Aseguradora: <strong style="color:var(--ink)">Qualitas</strong></span>
+            <span style="color:var(--mute)">Póliza: <strong class="mono" style="color:var(--ink)">4471-889-02</strong></span>
+          </div>
+        </div>
+
+        <div style="margin-top:34px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:26px">
+          <div style="border-top:1px solid var(--ink);padding-top:6px;font-size:9.5px;text-align:center;color:var(--mute)">Jefe de embarques</div>
+          <div style="border-top:1px solid var(--ink);padding-top:6px;font-size:9.5px;text-align:center;color:var(--mute)">Operador de la unidad</div>
+          <div style="border-top:1px solid var(--ink);padding-top:6px;font-size:9.5px;text-align:center;color:var(--mute)">Recibe en sucursal</div>
+        </div>
+
+        <p style="margin:18px 0 0;font-size:9px;color:var(--mute);line-height:1.5">La sucursal da entrada al lote completo escaneando el QR maestro. Cada bulto conserva su propio QR firmado para conciliación individual.</p>
+      </div>
+    </div>
+
+    <div>
+      <div class="frame-name">Acta de Faltante · carta</div>
+      <div class="frame doc">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;border-bottom:3px solid var(--amber);padding-bottom:14px">
+          <div>
+            <div style="font-size:21px;font-weight:700;letter-spacing:-.6px">ACTA DE FALTANTE</div>
+            <div style="font-size:11px;color:var(--mute);margin-top:3px">Cierre parcial de orden de compra</div>
+            <div class="mono" style="font-size:15px;font-weight:700;margin-top:9px">ACT-2026-0392</div>
+          </div>
+          <div style="text-align:right">
+            <div style="background:var(--amber-bg);border:1px solid var(--amber-line);border-radius:6px;padding:8px 12px">
+              <div style="font-size:9px;font-weight:700;letter-spacing:.7px;color:#4A3410">ESTADO DE LA OC</div>
+              <div style="font-size:14px;font-weight:700;color:var(--amber);margin-top:2px">CERRADA PARCIAL</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 28px;margin-top:16px">
+          <div style="display:flex;flex-direction:column;gap:7px">
+            <div style="display:flex;justify-content:space-between;border-bottom:1px dotted var(--line-2);padding-bottom:4px"><span style="color:var(--mute)">Orden de compra</span><strong class="mono">OC-88213</strong></div>
+            <div style="display:flex;justify-content:space-between;border-bottom:1px dotted var(--line-2);padding-bottom:4px"><span style="color:var(--mute)">Proveedor</span><strong>Alimentos del Golfo</strong></div>
+            <div style="display:flex;justify-content:space-between;border-bottom:1px dotted var(--line-2);padding-bottom:4px"><span style="color:var(--mute)">UUID del CFDI</span><strong class="mono" style="font-size:9px">3F2A9C41-…-C6D80F4B1E77</strong></div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:7px">
+            <div style="display:flex;justify-content:space-between;border-bottom:1px dotted var(--line-2);padding-bottom:4px"><span style="color:var(--mute)">Cita</span><strong>26-nov · 10:00 · And. 5</strong></div>
+            <div style="display:flex;justify-content:space-between;border-bottom:1px dotted var(--line-2);padding-bottom:4px"><span style="color:var(--mute)">Cierre de recepción</span><strong>26-nov-2026 · 12:38</strong></div>
+            <div style="display:flex;justify-content:space-between;border-bottom:1px dotted var(--line-2);padding-bottom:4px"><span style="color:var(--mute)">Operador de recibo</span><strong>R. Ibarra Cruz</strong></div>
+          </div>
+        </div>
+
+        <div style="margin-top:18px;display:flex;gap:11px">
+          <div style="flex:1;background:#FAFAF9;border:1px solid var(--line);border-radius:7px;padding:11px">
+            <div style="font-size:9px;font-weight:700;letter-spacing:.7px;color:var(--mute)">BULTOS EN OC</div>
+            <div class="tnum" style="font-size:19px;font-weight:700">148</div>
+          </div>
+          <div style="flex:1;background:#E9F5EF;border:1px solid #A8D5BF;border-radius:7px;padding:11px">
+            <div style="font-size:9px;font-weight:700;letter-spacing:.7px;color:#0B5A3A">RECIBIDOS</div>
+            <div class="tnum" style="font-size:19px;font-weight:700;color:var(--green)">141</div>
+          </div>
+          <div style="flex:1;background:#FCEDED;border:1px solid #F0BDBD;border-radius:7px;padding:11px">
+            <div style="font-size:9px;font-weight:700;letter-spacing:.7px;color:#8A1A1A">FALTANTES</div>
+            <div class="tnum" style="font-size:19px;font-weight:700;color:var(--red)">6</div>
+          </div>
+          <div style="flex:1;background:#FCEDED;border:1px solid #F0BDBD;border-radius:7px;padding:11px">
+            <div style="font-size:9px;font-weight:700;letter-spacing:.7px;color:#8A1A1A">RECHAZADOS</div>
+            <div class="tnum" style="font-size:19px;font-weight:700;color:var(--red)">1</div>
+          </div>
+        </div>
+
+        <div style="margin-top:20px">
+          <div style="font-size:12px;font-weight:700;margin-bottom:8px">Detalle del faltante</div>
+          <table style="font-size:10px">
+            <thead>
+              <tr style="border-bottom:1.5px solid var(--ink)">
+                <th style="text-align:left;padding:5px 4px;font-weight:700">SKU</th>
+                <th style="text-align:left;padding:5px 4px;font-weight:700">Descripción</th>
+                <th style="text-align:left;padding:5px 4px;font-weight:700">Sucursal</th>
+                <th style="text-align:right;padding:5px 4px;font-weight:700">Pedido</th>
+                <th style="text-align:right;padding:5px 4px;font-weight:700">Recibido</th>
+                <th style="text-align:right;padding:5px 4px;font-weight:700">Delta</th>
+                <th style="text-align:right;padding:5px 4px;font-weight:700">Importe</th>
+              </tr>
+            </thead>
+            <tbody id="tbody-faltante"></tbody>
+            <tfoot>
+              <tr style="border-top:1.5px solid var(--ink);font-weight:700">
+                <td colspan="5" style="padding:6px 4px">Importe no surtido — base para nota de crédito</td>
+                <td class="tnum" style="text-align:right;padding:6px 4px;color:var(--red)">−144 pz</td>
+                <td class="tnum" style="text-align:right;padding:6px 4px">$8,964.00</td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+
+        <div style="margin-top:18px;background:#FCEDED;border:1px solid #F0BDBD;border-radius:7px;padding:12px 14px">
+          <div style="font-size:11px;font-weight:700;color:#8A1A1A;margin-bottom:5px">Bulto rechazado en el mismo acto</div>
+          <p style="margin:0;font-size:10.5px;line-height:1.55;color:#6B1515"><span class="mono" style="font-weight:600">B00447</span> · SKU-993201 · 24 pz · excedente de 24 piezas sobre las 480 autorizadas. Devuelto al proveedor en el andén. Acta <span class="mono">ACT-2026-0391</span>.</p>
+        </div>
+
+        <div style="margin-top:16px">
+          <div style="font-size:11px;font-weight:700;margin-bottom:7px">Acciones disparadas automáticamente</div>
+          <ol style="margin:0;padding-left:19px;font-size:10.5px;line-height:1.75;color:var(--ink-2)">
+            <li>La OC-88213 se cierra como <strong>parcial</strong>; las 144 piezas faltantes quedan liberadas para reorden.</li>
+            <li>Se notifica a Compras y al comprador responsable de la categoría.</li>
+            <li>Se solicita <strong>nota de crédito</strong> al proveedor por $8,964.00 contra el CFDI timbrado.</li>
+            <li>Las 6 sucursales afectadas reciben aviso de surtido incompleto antes del embarque.</li>
+            <li>El score del proveedor PRV-0147 baja de <strong>94 a 91</strong> por exactitud documental.</li>
+          </ol>
+        </div>
+
+        <div style="margin-top:34px;display:grid;grid-template-columns:1fr 1fr;gap:26px">
+          <div style="border-top:1px solid var(--ink);padding-top:6px;font-size:9.5px;text-align:center;color:var(--mute)">Operador de recibo</div>
+          <div style="border-top:1px solid var(--ink);padding-top:6px;font-size:9.5px;text-align:center;color:var(--mute)">Representante del proveedor</div>
+        </div>
+
+        <p style="margin:18px 0 0;font-size:9px;color:var(--mute);line-height:1.5">Documento generado por el sistema al cerrar la cita. El reto señala que «los faltantes y excedentes se detectan tarde»: aquí quedan asentados antes de que la unidad salga del patio.</p>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+// Patrón de QR determinista, con apariencia realista (no es un QR legible).
+function drawQR(svgId, seed) {
+  var svg = document.getElementById(svgId);
+  if (!svg) return;
+  var N = 29, s = seed, out = '';
+  function rnd() { s = (s * 1103515245 + 12345) & 0x7fffffff; return s / 0x7fffffff; }
+  var grid = [], x, y;
+  for (y = 0; y < N; y++) { grid[y] = []; for (x = 0; x < N; x++) grid[y][x] = 0; }
+  function reserved(cx, cy) {
+    if (cx < 8 && cy < 8) return true;
+    if (cx > N - 9 && cy < 8) return true;
+    if (cx < 8 && cy > N - 9) return true;
+    if (cx >= N - 9 && cx <= N - 5 && cy >= N - 9 && cy <= N - 5) return true;
+    return false;
+  }
+  for (y = 0; y < N; y++) for (x = 0; x < N; x++) if (!reserved(x, y)) grid[y][x] = rnd() > 0.5 ? 1 : 0;
+  function finder(ox, oy) {
+    for (var fy = 0; fy < 7; fy++) for (var fx = 0; fx < 7; fx++) {
+      var edge = (fx === 0 || fx === 6 || fy === 0 || fy === 6);
+      var core = (fx >= 2 && fx <= 4 && fy >= 2 && fy <= 4);
+      grid[oy + fy][ox + fx] = (edge || core) ? 1 : 0;
+    }
+  }
+  finder(0, 0); finder(N - 7, 0); finder(0, N - 7);
+  for (y = 0; y < 5; y++) for (x = 0; x < 5; x++) {
+    var e = (x === 0 || x === 4 || y === 0 || y === 4);
+    grid[N - 9 + y][N - 9 + x] = (e || (x === 2 && y === 2)) ? 1 : 0;
+  }
+  for (x = 8; x < N - 8; x++) { grid[6][x] = x % 2 === 0 ? 1 : 0; grid[x][6] = x % 2 === 0 ? 1 : 0; }
+  for (y = 0; y < N; y++) for (x = 0; x < N; x++) if (grid[y][x]) out += '<rect x="' + x + '" y="' + y + '" width="1" height="1" fill="#16181D"/>';
+  svg.innerHTML = '<rect width="' + N + '" height="' + N + '" fill="#fff"/>' + out;
+}
+drawQR('qr-etiqueta', 48213);
+drawQR('qr-relacion', 11847);
+
+(function () {
+  var g = document.getElementById('grid-andenes');
+  if (!g) return;
+  var h = '', i;
+  for (i = 0; i < 10; i++) {
+    h += '<div class="mono" style="grid-column:1;grid-row:' + (i * 2 + 1) + ' / ' + (i * 2 + 3) +
+      ';font-size:10px;color:#6B7280;text-align:right;padding-right:6px">' + (8 + i) + ':00</div>';
+  }
+  var booked = [
+    [2, 1, 5, 'Grupo Lala', 'OC-88102'], [2, 6, 9, 'Bimbo', 'OC-88140'],
+    [2, 11, 16, 'Sabritas', 'OC-88155'], [2, 17, 21, 'Coca FEMSA', 'OC-88161'],
+    [3, 1, 4, 'Nestl&eacute;', 'OC-88110'], [3, 5, 11, 'Kimberly Clark', 'OC-88133'],
+    [3, 13, 17, 'Colgate', 'OC-88158'],
+    [4, 2, 7, 'Procter &amp; Gamble', 'OC-88118'], [4, 8, 12, 'Danone', 'OC-88142'],
+    [4, 15, 20, 'Herdez', 'OC-88160'],
+    [5, 3, 7, 'La Coste&ntilde;a', 'OC-88121'], [5, 8, 13, 'Sigma Alimentos', 'OC-88147'],
+    [5, 16, 21, 'Jumex', 'OC-88163']
+  ];
+  booked.forEach(function (b) {
+    h += '<div style="grid-column:' + b[0] + ';grid-row:' + b[1] + ' / ' + b[2] +
+      ';background:#D3D7DE;border-radius:4px;padding:5px 7px;font-size:10px;line-height:1.3;color:#2B2F38;overflow:hidden">' +
+      b[3] + '<br><span class="mono" style="font-size:9px">' + b[4] + '</span></div>';
+  });
+  h += '<div style="grid-column:6;grid-row:1 / 3;border:1px dashed #C9CDD4;border-radius:4px"></div>';
+  h += '<div style="grid-column:6;grid-row:3 / 5;border:1px dashed #C9CDD4;border-radius:4px"></div>';
+  h += '<div style="grid-column:6;grid-row:5 / 10;background:#1F5FD0;border-radius:4px;padding:6px 8px;font-size:10.5px;line-height:1.35;color:#fff;overflow:hidden"><strong>Su cita</strong><br>10:00 &ndash; 12:30<br><span class="mono" style="font-size:9px;opacity:.85">OC-88213</span></div>';
+  h += '<div style="grid-column:6;grid-row:10 / 11;border:1px dashed #C9CDD4;border-radius:4px"></div>';
+  h += '<div style="grid-column:6;grid-row:11 / 21;background:#EDEEF0;border:1px solid #C9CDD4;border-radius:4px;display:flex;align-items:center;justify-content:center;padding:6px;text-align:center;font-size:10px;color:#5B6170;line-height:1.35">Cerrado a recibo<br>13:00 &ndash; 18:00<br>uso: embarque</div>';
+  g.innerHTML = h;
+})();
+
+(function () {
+  var tb = document.getElementById('tbody-consolidacion');
+  if (!tb) return;
+  var rows = [
+    ['SUC-03', 'Centro',        11, 11, 11240, 'Tort&oacute;n', '14 h', 'ok'],
+    ['SUC-14', 'Plaza Oriente', 11, 11, 10840, 'Tort&oacute;n', '9 h',  'ok'],
+    ['SUC-07', 'Norte',          9, 11,  8960, 'Tort&oacute;n', '22 h', 'wait'],
+    ['SUC-21', 'Las Flores',     6,  6,  5720, 'Rab&oacute;n',  '17 h', 'ok'],
+    ['SUC-28', 'Industrial',     5,  6,  4810, 'Rab&oacute;n',  '41 h', 'alert'],
+    ['SUC-11', 'Sur',            4,  6,  3900, 'Rab&oacute;n',  '38 h', 'alert'],
+    ['SUC-19', 'Valle',          3,  3,  2740, '3.5 t',         '12 h', 'ok'],
+    ['SUC-32', 'Lomas',          2,  3,  1880, '3.5 t',         '37 h', 'alert'],
+    ['SUC-25', 'Poniente',       2,  6,  1910, 'Rab&oacute;n',  '6 h',  'wait']
+  ];
+  var style = {
+    ok:    { bar: '#0F7B4F', bg: '#E9F5EF', txt: '#0B5A3A', badge: 'Liberar' },
+    alert: { bar: '#B45309', bg: '#FDF6EC', txt: '#4A3410', badge: 'Excepci&oacute;n' },
+    wait:  { bar: '#B9CFF4', bg: '#FFFFFF', txt: '#5B6170', badge: 'Acumulando' }
+  };
+  var h = '';
+  rows.forEach(function (r, i) {
+    var st = style[r[7]];
+    var pct = Math.round(r[2] / r[3] * 100);
+    var btn = r[7] === 'ok'
+      ? '<button type="button" style="font-size:11px;font-weight:600;color:#fff;background:#1F5FD0;border:none;border-radius:6px;padding:7px 12px;min-height:34px">Programar</button>'
+      : r[7] === 'alert'
+      ? '<button type="button" style="font-size:11px;font-weight:600;color:#fff;background:#B45309;border:none;border-radius:6px;padding:7px 12px;min-height:34px">Liberar c/acta</button>'
+      : '<span style="font-size:11px;color:#6B7280">&mdash;</span>';
+    h += '<tr style="border-bottom:1px solid ' + (i === rows.length - 1 ? 'transparent' : '#EFF0F2') + ';background:' + st.bg + '">' +
+      '<td style="padding:11px 14px"><div style="font-weight:600;font-family:\'JetBrains Mono\',monospace">' + r[0] + '</div><div style="font-size:10.5px;color:#6B7280">' + r[1] + '</div></td>' +
+      '<td class="mono tnum" style="text-align:right;padding:11px 10px;font-weight:600">' + r[2] + ' / ' + r[3] + '</td>' +
+      '<td class="mono tnum" style="text-align:right;padding:11px 10px;color:#5B6170">' + r[4].toLocaleString('es-MX') + '</td>' +
+      '<td style="padding:11px 14px"><div style="display:flex;align-items:center;gap:9px"><div style="flex-grow:1;height:8px;background:#E6E8EC;border-radius:999px;overflow:hidden"><div style="width:' + pct + '%;height:100%;background:' + st.bar + '"></div></div><span class="tnum" style="font-size:11px;font-weight:700;color:' + st.txt + ';width:34px;text-align:right">' + pct + '%</span></div>' +
+      '<div style="font-size:10px;margin-top:3px;color:' + st.txt + ';font-weight:600">' + st.badge + '</div></td>' +
+      '<td style="padding:11px 10px;font-weight:600">' + r[5] + '</td>' +
+      '<td class="mono tnum" style="text-align:right;padding:11px 10px;' + (r[7] === 'alert' ? 'color:#B45309;font-weight:700' : 'color:#5B6170') + '">' + r[6] + '</td>' +
+      '<td style="text-align:right;padding:11px 14px">' + btn + '</td></tr>';
+  });
+  tb.innerHTML = h;
+})();
+
+(function () {
+  var tb = document.getElementById('tbody-relacion');
+  if (!tb) return;
+  var rows = [
+    ['T-0441', 'SUC14-N1-P02', 16, 'SKU-993201', 384, 1012, 'OC-88213'],
+    ['T-0442', 'SUC14-N1-P03', 15, 'SKU-993201', 360,  984, 'OC-88213'],
+    ['T-0443', 'SUC14-N1-P06', 14, 'SKU-771045', 336, 1105, 'OC-88213'],
+    ['T-0444', 'SUC14-N2-P01', 16, 'SKU-771045', 384, 1142, 'OC-88198'],
+    ['T-0445', 'SUC14-N2-P05', 15, 'SKU-883417', 360,  897, 'OC-88198'],
+    ['T-0446', 'SUC14-N2-P07', 14, 'SKU-883417', 336,  921, 'OC-88198'],
+    ['T-0447', 'SUC14-N3-P02', 16, 'SKU-610238', 384, 1068, 'OC-88176'],
+    ['T-0448', 'SUC14-N3-P04', 15, 'SKU-610238', 360, 1004, 'OC-88176'],
+    ['T-0449', 'SUC14-N3-P08', 14, 'SKU-452190', 336,  876, 'OC-88176'],
+    ['T-0450', 'cross-dock &middot; And. 2', 15, 'SKU-993201', 360, 942, 'OC-88213'],
+    ['T-0451', 'cross-dock &middot; And. 2', 14, 'SKU-452190', 336, 889, 'OC-88213']
+  ];
+  var h = '';
+  rows.forEach(function (r) {
+    var cd = r[1].indexOf('cross-dock') === 0;
+    h += '<tr style="border-bottom:1px solid #EFF0F2' + (cd ? ';background:#F5F8FD' : '') + '">' +
+      '<td class="mono" style="padding:5px 4px;font-weight:600">' + r[0] + '</td>' +
+      '<td class="mono" style="padding:5px 4px;' + (cd ? 'color:#17479C;font-weight:600' : 'color:#5B6170') + '">' + r[1] + '</td>' +
+      '<td class="tnum" style="text-align:right;padding:5px 4px">' + r[2] + '</td>' +
+      '<td class="mono" style="padding:5px 4px">' + r[3] + '</td>' +
+      '<td class="tnum" style="text-align:right;padding:5px 4px">' + r[4] + '</td>' +
+      '<td class="tnum" style="text-align:right;padding:5px 4px">' + r[5].toLocaleString('es-MX') + '</td>' +
+      '<td class="mono" style="padding:5px 4px;color:#5B6170">' + r[6] + '</td></tr>';
+  });
+  tb.innerHTML = h;
+})();
+
+(function () {
+  var tb = document.getElementById('tbody-faltante');
+  if (!tb) return;
+  var rows = [
+    ['SKU-771045', 'Frijol bayo en salmuera 560 g',     'SUC-07', 240, 192, -48, 2976.00],
+    ['SKU-883417', 'Chiles jalape&ntilde;os rebanados 380 g', 'SUC-14', 180, 156, -24, 1488.00],
+    ['SKU-610238', 'Salsa de tomate 1 kg',              'SUC-21', 300, 264, -36, 2232.00],
+    ['SKU-452190', 'Elote dorado en grano 410 g',       'SUC-28', 220, 184, -36, 2268.00]
+  ];
+  var h = '';
+  rows.forEach(function (r) {
+    h += '<tr style="border-bottom:1px solid #EFF0F2">' +
+      '<td class="mono" style="padding:5px 4px;font-weight:600">' + r[0] + '</td>' +
+      '<td style="padding:5px 4px;color:#2B2F38">' + r[1] + '</td>' +
+      '<td class="mono" style="padding:5px 4px;color:#5B6170">' + r[2] + '</td>' +
+      '<td class="tnum" style="text-align:right;padding:5px 4px">' + r[3] + '</td>' +
+      '<td class="tnum" style="text-align:right;padding:5px 4px">' + r[4] + '</td>' +
+      '<td class="tnum" style="text-align:right;padding:5px 4px;color:#C02626;font-weight:600">' + r[5] + '</td>' +
+      '<td class="tnum" style="text-align:right;padding:5px 4px">$' + r[6].toLocaleString('es-MX', { minimumFractionDigits: 2 }) + '</td></tr>';
+  });
+  tb.innerHTML = h;
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,280 @@
+===============================================================================
+TECNOLOGIAS POR DISPOSITIVO - PROPUESTA CEDIS v2
+Reto "De la Orden de Compra al Embarque"
+Referencias de mercado Mexico, noviembre 2026. Sin IVA.
+===============================================================================
+
+Criterio general: cada dispositivo corre lo mas simple que resuelva su trabajo.
+El anden no es lugar para un framework pesado, y la nube no es lugar para la
+validacion que debe funcionar sin internet.
+
+
+-------------------------------------------------------------------------------
+1. TERMINAL HANDHELD DE ANDEN  (8 equipos)
+-------------------------------------------------------------------------------
+Que hace: escanea bultos en la descarga, valida contra la OC, acepta o rechaza.
+Condicion dura: tiene que funcionar SIN RED.
+
+HARDWARE
+  Zebra TC27 o TC53            $19,500 c/u
+    Android 13+ con AER (Android Enterprise Recommended)
+    IP65/IP67, caida 1.5 m sobre concreto
+    Motor de escaneo SE4710 (2D/QR, lectura 10-70 cm)
+    Bateria caliente intercambiable (hot swap) - turno de 10 h sin apagar
+  Alternativa economica: Honeywell ScanPal EDA52 (~$11,500)
+
+SISTEMA OPERATIVO Y GESTION
+  Android Enterprise en modo Dedicated Device (COSU / kiosco)
+  MDM: Zebra StageNow + SOTI MobiControl, o Android Management API (gratis)
+    -> bloquea el equipo a una sola app, despliega actualizaciones en remoto
+
+APP
+  Kotlin nativo + Jetpack Compose
+    NO React Native ni Flutter: el SDK de escaneo de Zebra (DataWedge / EMDK)
+    es nativo, y en nativo el escaneo llega como intent del sistema sin
+    puente de JavaScript de por medio. En un almacen eso son decimas de
+    segundo por bulto, multiplicadas por 148 bultos por camion.
+  Base local: SQLite con Room
+  Cola de sincronizacion: WorkManager con reintento exponencial
+  Escaneo: DataWedge en modo intent (no camara)
+  Idempotencia: cada evento lleva UUID v4 generado en el equipo
+
+POR QUE ASI
+  La OC completa y las etiquetas esperadas se descargan al confirmar la cita.
+  El handheld valida firma HMAC, SKU y cantidad contra su copia local.
+  Si cae el Wi-Fi o el ISP, la recepcion sigue. Al reconectar, WorkManager
+  vacia la cola; el UUID por evento impide duplicados.
+
+
+-------------------------------------------------------------------------------
+2. TERMINAL HANDHELD DE ACOMODO  (6 equipos)
+-------------------------------------------------------------------------------
+Que hace: put-away dirigido, conteos ciclicos, consulta de ubicacion.
+Uso menos intensivo que el anden, no justifica el precio del TC27.
+
+HARDWARE
+  Honeywell ScanPal EDA52       $11,500 c/u
+    Android 12+, IP65, caida 1.2-1.5 m
+    Pantalla 5.5" - suficiente para una lista de ubicaciones
+  Misma app, mismo MDM, mismo perfil de kiosco
+
+
+-------------------------------------------------------------------------------
+3. TERMINAL MONTADA EN MONTACARGAS - VMT  (2 equipos)
+-------------------------------------------------------------------------------
+Que hace: acomodo a nivel 4 (6 m de altura). No se opera con el equipo en la
+mano: el operador necesita las dos manos en los controles.
+
+HARDWARE
+  Zebra VC8300 Freezer/Standard  $38,000 c/u
+    Android, montaje VESA en cabina, alimentacion 12-48 V del montacargas
+    Pantalla 10" legible bajo luz directa
+    Escaner inalambrico tethered: Zebra DS3678-ER (lectura hasta 10 m)
+    -> el operador lee la etiqueta del nivel 4 SIN bajarse
+
+SOFTWARE
+  Misma app Android, layout de tablet (pantallas grandes, botones de 72 px)
+  Mismo MDM
+
+POR QUE NO UN HANDHELD
+  Un operador a 6 m de altura con un handheld en la mano es un riesgo y es
+  lento. La v1 compro 2 handhelds para acomodo y no contemplo esto.
+
+
+-------------------------------------------------------------------------------
+4. RED WI-FI INDUSTRIAL  (16 APs)
+-------------------------------------------------------------------------------
+Que hace: cobertura continua a 1.2 m del suelo dentro de pasillos con racks
+metalicos de 6 m. No necesita ancho de banda; necesita roaming sin cortes.
+
+HARDWARE
+  Ruckus R650 / R670            $14,500 c/u x 16
+    Wi-Fi 6, antena adaptativa BeamFlex+
+    -> la antena reorienta su lobulo por cliente; es LA razon tecnica para
+       elegir Ruckus en nave metalica sobre Cisco o Aruba
+    4 unidades con antena direccional (pasillo E y zona flex)
+  Controladora: Ruckus SmartZone virtual o Unleashed  $48,000 (+ soporte 5 anos)
+    Unleashed no requiere servidor: un AP actua de maestro. Para 16 APs basta.
+  Switch: L3 PoE+ 48 puertos, 740 W                   $62,000
+  Cableado: Cat6A + canalizacion industrial, 16 tiradas a 6-7 m  $78,000
+
+CONFIGURACION
+  Banda           5 GHz unicamente, canales de 20 MHz (NO 40)
+  Canales         solo no-DFS: 36, 40, 44, 48, 149, 153, 157, 161, 165
+                  -> un evento de radar en DFS tira el AP y para el pasillo
+  2.4 GHz         activo solo en 4 APs (canales 1/6/11) para equipo legacy
+  Potencia Tx     11-15 dBm (celdas chicas = roaming agil)
+  Tasas minimas   deshabilitar 1/2/5.5/11/6/9 Mbps; minima habilitada 12 Mbps
+                  -> sin esto el handheld se queda pegado a un AP lejano
+  Roaming         802.11r (Fast Transition) + 802.11k + 802.11v
+  Seguridad       WPA2-Enterprise con RADIUS, modo transicion WPA3
+                  -> WPA3 puro rompe handhelds de generacion anterior
+  Objetivo        >= -65 dBm primario, >= -72 dBm secundario, SNR >= 25 dB,
+                  minimo 2 APs audibles en todo punto operativo
+
+MONTAJE
+  5.0 m sobre el dintel en andenes (proyecta dentro de la caja seca)
+  5.5 m DENTRO del pasillo, radiando hacia abajo
+  Nunca sobre la coronilla del rack: ilumina el metal y deja al operador
+  (que esta a 1.2 m, dentro del pasillo) en sombra.
+
+
+-------------------------------------------------------------------------------
+5. NODO EDGE EN EL CEDIS  (1 equipo)
+-------------------------------------------------------------------------------
+Que hace: aqui vive la operacion. La nube es replica, no dependencia.
+
+HARDWARE
+  Mini servidor industrial, SSD NVMe en espejo (RAID 1),
+  fuente redundante, 32 GB RAM            $42,000
+  UPS 3 kVA online + rack de comunicaciones + PDU   $34,000
+
+SOFTWARE
+  SO              Ubuntu Server LTS
+  Contenedores    Docker Compose (no Kubernetes: 1 nodo no lo justifica)
+  Base de datos   PostgreSQL 16
+  API             .NET 8 Minimal API o FastAPI (Python 3.12)
+  Cola            Redis Streams para eventos de escaneo
+  Replica a nube  logical replication de PostgreSQL
+
+CONECTIVIDAD
+  Fibra 300 Mbps + failover LTE (router dual WAN)    $3,900/mes
+
+
+-------------------------------------------------------------------------------
+6. PORTAL WEB DE PROVEEDORES  (navegador, 35 proveedores)
+-------------------------------------------------------------------------------
+Que hace: captura de OC y CFDI, carga del desglose, reserva de anden,
+descarga de etiquetas.
+
+STACK
+  Frontend        React 18 + TypeScript + Vite
+                  Tailwind CSS + shadcn/ui
+  Backend         mismo API del nodo edge, expuesto en la nube
+  Auth            OAuth2 / OIDC con Keycloak (autoservicio para proveedores)
+  Generacion PDF  servidor: Playwright headless -> HTML a PDF
+                  etiquetas 4x6" listas para imprimir
+  QR              libreria qrcode (server-side), ECC nivel M, version 7
+  Firma del QR    HMAC-SHA256 truncado a 8 bytes en base32
+                  -> mata la etiqueta fotocopiada
+
+COMPATIBILIDAD
+  Chrome/Edge/Firefox ultimas 2 versiones + Safari 16+.
+  Responsivo: varios proveedores chicos agendan desde el celular.
+
+
+-------------------------------------------------------------------------------
+7. TABLERO DE CONSOLIDACION  (PC de escritorio, oficina de embarques)
+-------------------------------------------------------------------------------
+Que hace: semaforo por sucursal en tiempo real, seleccion de unidad,
+liberacion de embarque.
+
+HARDWARE
+  PC de escritorio + monitor 27" montado en pared
+  (el jefe de embarques lo consulta de pie, de lejos)
+
+SOFTWARE
+  Misma app React, vista de tablero
+  Tiempo real: WebSocket contra el nodo edge (SignalR o socket.io)
+  Graficas: Recharts
+  Se actualiza en cuanto un escaneo cambia el acumulado de una sucursal.
+
+
+-------------------------------------------------------------------------------
+8. IMPRESION
+-------------------------------------------------------------------------------
+IMPRESORA TERMICA DE ETIQUETAS  (2 equipos)
+  Zebra ZT411 203 dpi            $28,000 c/u
+    Termica directa + transferencia termica, 4" de ancho
+    Ethernet + USB
+    Lenguaje: ZPL II (generado por el backend, no por el driver)
+  Ubicacion: 1 en recibo (reimpresion de etiqueta ilegible),
+             1 en caseta (kiosco para el proveedor que no puede imprimir)
+  Consumible: etiqueta termica 4x6" + ribbon resina  ~$1,400/mes
+
+IMPRESORA LASER MONOCROMATICA  (2 equipos)
+  Brother HL-L5210DN o HP LaserJet Pro 4003dn   $7,400 c/u
+    Duplex, Ethernet, 42 ppm
+  Ubicacion: oficina de embarques (Relacion de Embarque) + respaldo en recibo
+  Volumen: ~55 paginas/dia = ~1,430/mes
+  Consumible: papel + toner prorrateado   ~$970/mes
+
+
+-------------------------------------------------------------------------------
+9. INTEGRACION FISCAL Y CON EL ERP
+-------------------------------------------------------------------------------
+CFDI 4.0
+  Validacion de UUID contra el servicio de consulta del SAT
+  -> detecta factura cancelada o apocrifa ANTES de que el camion entre
+  El UUID es el folio unico, no un consecutivo interno.
+
+COMPLEMENTO CARTA PORTE 3.1
+  Obligatorio desde el 17 de julio de 2024 para autotransporte federal.
+  La Relacion de Embarque alimenta: permiso SICT, configuracion vehicular,
+  placas, aseguradora, numero de poliza.
+  PAC de timbrado: Facturama, SW Sapien o Finkok (API REST)
+  Costo: ~650 timbres/mes   ~$780/mes
+
+ERP
+  Integracion por API REST; contingencia por archivo plano (CSV/XML sobre
+  SFTP) para los primeros 60 dias.
+  IMPORTANTE: cerrar el contrato con el proveedor del ERP ANTES de iniciar
+  la Fase 2. Es el riesgo de calendario mas probable del proyecto.
+
+
+-------------------------------------------------------------------------------
+10. OBSERVABILIDAD Y RESPALDO
+-------------------------------------------------------------------------------
+  Metricas        Prometheus + Grafana (en el nodo edge)
+  Logs            Loki
+  Errores de app  Sentry
+  Respaldo        pgBackRest a S3/Azure Blob, diario + WAL continuo
+  Alertas         caida de AP, cola de sincronizacion > 200 eventos,
+                  tarima con antiguedad > 36 h
+
+
+===============================================================================
+RESUMEN POR DISPOSITIVO
+===============================================================================
+
+DISPOSITIVO              CANT   TECNOLOGIA PRINCIPAL           UNITARIO
+-------------------------------------------------------------------------------
+Handheld de anden          8    Zebra TC27 / Android + Kotlin   $19,500
+Handheld de acomodo        6    Honeywell EDA52 / misma app     $11,500
+Terminal en montacargas    2    Zebra VC8300 + DS3678-ER        $38,000
+Access Point              16    Ruckus R650 / Wi-Fi 6           $14,500
+Controladora Wi-Fi         1    Ruckus SmartZone o Unleashed    $48,000
+Switch L3 PoE+             1    48 puertos, 740 W               $62,000
+Nodo edge                  1    Ubuntu + PostgreSQL + Docker    $42,000
+UPS y rack                 1    3 kVA online                    $34,000
+Impresora termica          2    Zebra ZT411 / ZPL II            $28,000
+Impresora laser            2    Brother HL-L5210DN              $ 7,400
+Portal y tablero           -    React + TypeScript (navegador)        -
+
+
+===============================================================================
+LAS TRES DECISIONES QUE IMPORTAN
+===============================================================================
+
+1. KOTLIN NATIVO, NO MULTIPLATAFORMA
+   El SDK de escaneo es nativo. Un puente de JavaScript entre el motor de
+   escaneo y la app cuesta decimas de segundo por bulto. Con 148 bultos por
+   camion y 35 camiones al dia, eso se nota en el anden.
+
+2. OFFLINE-FIRST, NO CLOUD PURO
+   La v1 validaba cada escaneo contra un servidor en la nube. Eso convierte
+   al ISP en punto unico de falla de todo el CEDIS. Con SQLite local +
+   WorkManager + UUID por evento, la operacion sobrevive a la caida de red
+   y no duplica nada al reconectar.
+
+3. RUCKUS, NO CISCO NI ARUBA
+   No por marca: por la antena adaptativa BeamFlex, que esta disenada
+   exactamente para el problema de esta nave (reflexion y sombra por rack
+   metalico). Cisco y Aruba son excelentes en oficina; aqui el diferenciador
+   es el patron de radiacion por cliente.
+
+
+Nota: todos los precios son referenciales sin IVA a noviembre de 2026 y
+requieren cotizacion formal de distribuidor autorizado antes de liberar el
+proyecto. El numero de APs y su posicion son un diseno predictivo: el site
+survey de la Fase 0 los confirma o los corrige con medicion en sitio.
