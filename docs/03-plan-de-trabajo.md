@@ -1,7 +1,17 @@
 # Plan de trabajo en equipo — Prototipo CEDIS
 
-**Equipo:** 4 personas. Tres bloques delegables y uno de coordinación.
 **Regla base:** cada bloque es dueño exclusivo de sus carpetas. Nadie edita archivos de otro bloque. Si necesitas un cambio en territorio ajeno, lo pides; no lo haces.
+
+## Quién lleva qué
+
+| Bloque | Quién |
+|:---|:---|
+| **A · Datos y persistencia** | **Delegado** a un compañero |
+| **B · API y reglas de negocio** | **Delegado** a un compañero |
+| **C · Frontend y documentos** | **Equipo base** |
+| **D · Coordinación** | **Equipo base** |
+
+Consecuencia directa de este reparto: **la frontera entre B y C dejó de ser interna.** Antes era un acuerdo entre dos personas del mismo equipo; ahora es la frontera entre lo delegado y lo que llevamos nosotros. Por eso el contrato de API de la sección 6 pasa de ser buena práctica a ser **la pieza que decide si el proyecto se entrega o no**.
 
 ---
 
@@ -88,20 +98,25 @@ Si algo no coincide, se arregla **antes**, no a medio sprint.
 ## 1. Los cuatro bloques
 
 ```
-                    +--------------------------+
-                    |  COORDINACIÓN (tú)       |
-                    |  arquitectura · negocio  |
-                    |  integración · jurado    |
-                    +------------+-------------+
-                                 | contratos
-        +------------------------+------------------------+
-        |                        |                        |
-+-------v---------+   +----------v--------+   +-----------v-------+
+            == DELEGADO ==              ==== EQUIPO BASE ====
+
++-----------------+   +-------------------+   +-------------------+
 | A · DATOS       |   | B · API Y REGLAS  |   | C · FRONTEND      |
 | Modelo físico   |-->| Routers · sync    |-->| Portal · tablero  |
 | Migraciones     |   | OpenAPI · pruebas |   | Handheld sim      |
 | Repositorios    |   |                   |   | PDF y etiquetas   |
-+-----------------+   +-------------------+   +-------------------+
++-----------------+   +---------+---------+   +---------+---------+
+                                 |                       |
+                                 |  <-- FRONTERA -->     |
+                                 |   contrato de API     |
+                                 +-----------+-----------+
+                                             |
+                                  +----------v-----------+
+                                  | D · COORDINACIÓN     |
+                                  | arquitectura         |
+                                  | contratos · negocio  |
+                                  | integración · jurado |
+                                  +----------------------+
 ```
 
 El flujo de dependencia es **A → B → C**, pero no es secuencial: B y C arrancan contra contratos acordados el día 1, no contra código terminado.
@@ -259,9 +274,9 @@ No define endpoints. Si falta un dato en la respuesta, lo pide a B; no inventa e
 
 ---
 
-## 5. Coordinación — lo que te queda a ti
+## 5. Coordinación — equipo base
 
-No es un bloque menor: es el que decide si el proyecto se entiende.
+No es un bloque menor: es el que decide si el proyecto se entiende. Va junto con el bloque C, así que el equipo base carga con **el entregable más visible ante el jurado y además la integración de todo**. Conviene no subestimarlo: entre C y D hay más trabajo que en A o B por separado.
 
 ### Stack del bloque
 
@@ -338,6 +353,7 @@ Se acuerda el JSON de petición y respuesta de los 9 endpoints principales **ant
 |:---|:---|
 | La arquitectura §4–§11 no se termina y A y B avanzan a ciegas | Es la tarea 1 de coordinación. Si se atrasa, A y B acuerdan un modelo de datos provisional por escrito |
 | B y C se serializan esperándose | Contratos congelados el día 1 y respuestas de ejemplo en archivos |
+| **C depende de un bloque delegado.** Si B se atrasa, el entregable más visible se queda sin datos | C trabaja contra respuestas de ejemplo en archivos desde el día 1 y **nunca espera** a que B tenga el endpoint vivo. La demo del jurado debe poder correr con datos de ejemplo si hace falta |
 | Dos bloques tocan `app/servicios/` | `impresion.py` es de C, `repositorios.py` es de A, `sat.py` es de B. Está repartido a propósito |
 | El prototipo se demuestra con datos a mano en vez de la base real | La semilla A6 es entregable con fecha, no un extra |
 | Nadie prueba la demo completa hasta el final | D5 ensaya desde la etapa 3, no en la etapa 5 |

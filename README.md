@@ -36,12 +36,14 @@ Si solo te llevas tres cosas de este proyecto, que sean estas:
 
 Cada bloque es **dueño exclusivo** de sus carpetas. Nadie edita archivos de otro bloque.
 
-| Bloque | Dueño | Carpetas | Primer paso |
+| Bloque | Quién | Carpetas | Primer paso |
 |:---|:---|:---|:---|
-| **A · Datos** | — | `backend/app/modelos/`, `backend/app/servicios/repositorios.py`, `backend/alembic/` | Instalar Docker y PostgreSQL 16 |
-| **B · API y reglas** | — | `backend/app/dominio/`, `api/`, `esquemas/`, `tests/` | Instalar pytest y correr la suite |
-| **C · Frontend** | — | `frontend/` (crear), `backend/app/servicios/impresion.py` | Montar Vite + React |
-| **D · Coordinación** | — | `docs/`, `mockups/` | Congelar contratos de API |
+| **A · Datos** | **Delegado** | `backend/app/modelos/`, `backend/app/servicios/repositorios.py`, `backend/alembic/` | Instalar Docker y PostgreSQL 16 |
+| **B · API y reglas** | **Delegado** | `backend/app/dominio/`, `api/`, `esquemas/`, `tests/` | Instalar pytest y correr la suite |
+| **C · Frontend** | Equipo base | `frontend/` (crear), `backend/app/servicios/impresion.py` | Montar Vite + React |
+| **D · Coordinación** | Equipo base | `docs/`, `mockups/` | Congelar contratos de API |
+
+> La frontera entre **B** y **C** es la única que cruza entre lo delegado y el equipo base. Por eso el contrato de API se congela el día 1: sin eso, el entregable más visible depende de que otro termine primero.
 
 El detalle completo, con entregables y criterio de terminado, está en [`docs/03-plan-de-trabajo.md`](docs/03-plan-de-trabajo.md).
 
