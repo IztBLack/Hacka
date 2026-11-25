@@ -235,17 +235,22 @@ No crea ni modifica migraciones. No escribe React.
 
 | Qué | Versión fija |
 |:---|:---|
-| Runtime | Node **24.x LTS** |
-| Lenguaje | TypeScript **5.5+**, `"strict": true` — sin `any` sin justificar |
-| Framework | React **18.3** |
-| Empaquetador | Vite **5.x** |
-| Estilos | Tailwind **3.4** + shadcn/ui |
-| Datos del servidor | TanStack Query **5.x** + `fetch` nativo — sin axios |
-| Gráficas | Recharts **2.x** |
+> Versiones **verificadas contra el `package.json` real**, no copiadas de la propuesta. El andamio de Vite instaló las vigentes a noviembre de 2026, que son más nuevas que las que decía la propuesta original. Se adoptan estas: bajar de versión a propósito no compra nada, y `package-lock.json` ya las fija para los cuatro.
+
+| Qué | Versión instalada |
+|:---|:---|
+| Runtime | Node **24.18** |
+| Lenguaje | TypeScript **7.0**, `"strict": true` — sin `any` sin justificar |
+| Framework | React **19.3** |
+| Empaquetador | Vite **8.3** |
+| Estilos | Tailwind **3.4** |
+| Datos del servidor | TanStack Query **5.108** + `fetch` nativo — sin axios |
+| Ruteo | React Router **7.18** |
+| Gráficas | Recharts **3.11** |
 | Tiempo real | WebSocket nativo contra `cedis-ws` |
 | QR | librería `qrcode` — **QR real escaneable**, no el patrón decorativo del mockup |
 | PDF | Playwright headless del lado del servidor, no en el navegador |
-| Formato y lint | ESLint **9** (flat config) + Prettier **3** |
+| Formato y lint | **oxlint 1.90**, que es lo que trae el andamio. No se mezcla con ESLint |
 | Paleta y tipografía | las del mockup: Inter + JetBrains Mono; azul `#1F5FD0`, verde `#0F7B4F`, rojo `#C02626`, ámbar `#B45309` |
 | Accesibilidad | objetivos táctiles ≥44 px, contraste ≥4.5:1 — es RNF, no un extra |
 
