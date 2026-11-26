@@ -11,8 +11,28 @@
  */
 
 import { useMemo, useState } from 'react'
+import { tableroAVista } from '../api/adaptadores'
+import { URL_API, useTablero } from '../api/cliente'
 import { CONSOLIDACION_DEMO, NOMBRE_UNIDAD } from '../datos/ejemplo'
-import type { DecisionConsolidacion, FilaConsolidacion } from '../tipos/api'
+import type { DecisionConsolidacion, FilaConsolidacion } from '../tipos/vista'
+
+/** Nombres de sucursal: el tablero real solo manda la clave. */
+const NOMBRES_SUCURSAL: Record<string, string> = Object.fromEntries(
+  CONSOLIDACION_DEMO.filas.map((f) => [f.sucursal, f.nombre]),
+)
+
+function OrigenDatos({ enVivo, cargando }: { enVivo: boolean; cargando: boolean }) {
+  const [texto, clase, titulo] = cargando
+    ? ['Conectando…', 'bg-tinta-2 text-linea-2', `Consultando ${URL_API}`]
+    : enVivo
+      ? ['En vivo · BD', 'bg-verde text-white', `GET ${URL_API}/consolidacion/tablero`]
+      : ['Demo sin conexión', 'bg-ambar text-white', `${URL_API} no respondió: datos de ejemplo`]
+  return (
+    <span title={titulo} className={`rounded-full px-2.5 py-1 text-[10.5px] font-semibold ${clase}`}>
+      {texto}
+    </span>
+  )
+}
 
 type Estado = 'pendiente' | 'programada'
 
@@ -43,7 +63,15 @@ function Indicador({ titulo, valor, acento }: { titulo: string; valor: string; a
 }
 
 export default function Tablero() {
-  const d = CONSOLIDACION_DEMO
+  // Con API: datos de la BD. Sin API (error de red o de servidor): la demo.
+  // La junta nunca ve una pantalla rota.
+  const consulta = useTablero()
+  const enVivo = consulta.data !== undefined
+  const cargando = consulta.isPending && consulta.fetchStatus === 'fetching'
+  const d = useMemo(
+    () => (consulta.data ? tableroAVista(consulta.data, NOMBRES_SUCURSAL) : CONSOLIDACION_DEMO),
+    [consulta.data],
+  )
   const [despacho, setDespacho] = useState<Record<string, Despachada>>({})
   const [pidiendoActa, setPidiendoActa] = useState<string | null>(null)
   const [autorizo, setAutorizo] = useState('')
@@ -96,9 +124,18 @@ export default function Tablero() {
     <div className="flex min-h-screen flex-col bg-piso">
       <header className="flex flex-wrap items-center gap-5 bg-tinta px-7 py-4 text-white">
         <div className="min-w-0 flex-grow">
-          <div className="text-[15px] font-semibold">Consolidación por sucursal</div>
+          <div className="flex items-center gap-2.5">
+            <span className="text-[15px] font-semibold">Consolidación por sucursal</span>
+            <OrigenDatos enVivo={enVivo} cargando={cargando} />
+          </div>
           <div className="mt-0.5 text-[11.5px] text-linea-2">
-            26 de noviembre de 2026 · 15:20 · 3 andenes de embarque
+            {enVivo
+              ? new Date(consulta.dataUpdatedAt).toLocaleString('es-MX', {
+                  dateStyle: 'long',
+                  timeStyle: 'short',
+                })
+              : '26 de noviembre de 2026 · 15:20'}{' '}
+            · 3 andenes de embarque
           </div>
         </div>
         <div className="flex flex-wrap gap-6">
@@ -157,7 +194,21 @@ export default function Tablero() {
               </tr>
             </thead>
             <tbody>
-              {d.filas.map((f) => {
+              {cargando && (
+                <tr>
+                  <td colSpan={7} className="px-3.5 py-6 text-center text-[12px] text-apagado">
+                    Consultando el tablero del CEDIS…
+                  </td>
+                </tr>
+              )}
+              {enVivo && d.filas.length === 0 && (
+                <tr>
+                  <td colSpan={7} className="px-3.5 py-6 text-center text-[12px] text-apagado">
+                    No hay tarimas pendientes de embarque en la base.
+                  </td>
+                </tr>
+              )}
+              {!cargando && d.filas.map((f) => {
                 const e = ESTILO[f.decision]
                 const pct = Math.round(f.ocupacion * 100)
                 const yaSalio = despacho[f.sucursal]
@@ -176,7 +227,7 @@ export default function Tablero() {
                       {f.tarimas} / {f.posiciones_unidad}
                     </td>
                     <td className="num px-2.5 py-3 text-right font-mono text-apagado">
-                      {f.peso_kg.toLocaleString('es-MX')}
+                      {f.peso_kg === null ? '—' : f.peso_kg.toLocaleString('es-MX')}
                     </td>
                     <td className="w-[210px] px-3.5 py-3">
                       <div className="flex items-center gap-2.5">

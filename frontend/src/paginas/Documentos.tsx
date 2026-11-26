@@ -329,7 +329,7 @@ function ActaFaltante() {
             timbrado.
           </li>
           <li>
-            Las 6 sucursales afectadas reciben aviso de surtido incompleto antes del embarque.
+            Las 4 sucursales afectadas reciben aviso de surtido incompleto antes del embarque.
           </li>
           <li>
             El score del proveedor PRV-0147 baja de <strong>94 a 91</strong> por exactitud

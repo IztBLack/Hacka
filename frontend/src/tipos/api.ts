@@ -1,231 +1,405 @@
 /**
- * Tipos del contrato de API — docs/02-arquitectura.md §6.
+ * Contrato del backend FastAPI real — espejo de `backend/app/esquemas/*.py`.
  *
- * Esta es la frontera entre el bloque B (API) y el bloque C (frontend).
- * Si algo aquí no coincide con lo que devuelve el backend, el error está
- * en el contrato, no en una de las dos partes. Se avisa y se corrige aquí
- * primero; nadie "ajusta su lado" en silencio.
+ * Rutas SIN prefijo `/v1` (ver `backend/app/main.py`):
+ *   /citas, /etiquetas, /recepcion, /consolidacion, /embarques, /salud
  *
- * Mientras B no entregue los endpoints, estas formas las cumplen los datos
- * de ejemplo de `src/datos/ejemplo.ts`.
+ * Si el backend cambia un esquema Pydantic, se cambia aquí en el mismo PR.
+ * Las pantallas NO consumen estos tipos directo: pasan por
+ * `src/api/adaptadores.ts`, que traduce al modelo de vista (`tipos/vista.ts`).
  */
 
 // ---------------------------------------------------------------------------
-// Comunes
+// Primitivos
 // ---------------------------------------------------------------------------
 
-/** Fecha y hora en ISO 8601, siempre UTC. Se convierte solo al mostrar. */
+/** `date` de Python: "2026-11-26". */
+export type FechaIso = string
+
+/**
+ * `time` de Python SIN zona: "08:00:00" (o "08:00"). Es hora de pared del
+ * CEDIS. Nunca se convierte con `new Date()`: se parte a minutos con
+ * `minutosDeHora` y ya.
+ */
+export type HoraLocal = string
+
+/** `datetime` de Python (con zona, UTC). */
 export type FechaHoraIso = string
 
-export type ClaveSucursal = string // "SUC-14"
-export type FolioOc = string // "OC-88213"
-export type FolioBulto = string // "B00412"
-export type FolioCita = string // "CITA-2026-04412"
-
-/** Error en formato RFC 7807, como lo devuelve el mapeo del §6. */
-export interface ErrorApi {
-  type: string
-  title: string
-  status: number
-  detail?: string
-  /** Código estable para ramificar en la interfaz, p. ej. "uuid_cfdi_duplicado". */
-  codigo?: string
+/** Error de FastAPI: `HTTPException` → `{detail: string}`; validación 422 → lista. */
+export interface ErrorFastApi {
+  detail:
+    | string
+    | Array<{ loc: (string | number)[]; msg: string; type: string }>
 }
 
 // ---------------------------------------------------------------------------
-// §6.1  POST /v1/citas
+// /citas  (esquemas/citas.py)
 // ---------------------------------------------------------------------------
 
-export interface BultoDeclarado {
+/** POST /citas/duracion */
+export interface SolicitudDuracion {
+  n_bultos: number
+}
+
+export interface RespuestaDuracion {
+  n_bultos: number
+  duracion_minutos: number
+  formula: string
+}
+
+/** POST /citas/slots */
+export interface SolicitudSlots {
+  fecha: FechaIso
+  n_bultos: number
+  incluir_anden_flex?: boolean // default true
+}
+
+export interface SlotLibre {
+  anden: number
+  hora_inicio: HoraLocal
+  hora_fin: HoraLocal
+  es_anden_flex: boolean
+}
+
+export interface RespuestaSlots {
+  fecha: FechaIso
+  duracion_minutos: number
+  capacidad_dia: number
+  total_slots: number
+  slots: SlotLibre[]
+}
+
+/** POST /citas → 201. 404 proveedor/OC, 409 CFDI o andén ocupado, 503 folio. */
+export interface SolicitudCita {
+  proveedor: string // "PRV-0147"
+  orden_compra: string // "OC-88213"
+  uuid_cfdi?: string | null
+  fecha: FechaIso
+  anden: number // 1..5
+  hora_inicio: HoraLocal
+  n_bultos: number
+}
+
+export interface RespuestaCita {
+  folio: string
+  proveedor: string
+  orden_compra: string
+  fecha: FechaIso
+  anden: number
+  hora_inicio: HoraLocal
+  hora_fin: HoraLocal
+  duracion_minutos: number
+  estado: string
+  cfdi_validado: boolean
+}
+
+/** GET /citas/capacidad */
+export interface RespuestaCapacidad {
+  andenes_recibo: number
+  horas_operacion: number
+  capacidad_sin_anden_flex: number
+  capacidad_con_anden_flex: number
+  citas_requeridas: number
+  deficit_sin_flex: number
+  alcanza_con_flex: boolean
+}
+
+// ---------------------------------------------------------------------------
+// /etiquetas  (esquemas/etiquetas.py)
+// ---------------------------------------------------------------------------
+
+export interface SolicitudEtiqueta {
+  id_bulto: string
+  orden_compra: string
+  proveedor: string
+  sucursal: string
   sku: string
-  sucursal: ClaveSucursal
-  piezas: number
+  cantidad: number
   peso_kg: number
   volumen_m3: number
 }
 
-export interface SolicitudCita {
-  folio_oc: FolioOc
-  uuid_cfdi: string
-  anden_preferido: number
-  inicio_solicitado: FechaHoraIso
-  bultos: BultoDeclarado[]
+export interface SolicitudLote {
+  bultos: SolicitudEtiqueta[]
 }
 
-export type EstadoCita =
-  | 'provisional'
-  | 'confirmada'
-  | 'en_curso'
-  | 'cerrada'
-  | 'no_show'
-  | 'cancelada'
-
-export interface RespuestaCita {
-  folio_cita: FolioCita
-  anden_asignado: number
-  anden_solicitado: number
-  /** true cuando el motor movió la cita por traslape. Hay que decirlo en pantalla. */
-  reubicada: boolean
-  motivo_reubicacion?: string
-  inicio: FechaHoraIso
-  fin: FechaHoraIso
-  /** Lo que se reserva en el andén: bloque de 30 min. */
-  duracion_min: number
-  /** Lo que arrojó max(60, 12 + 0.9 * n_bultos) antes de redondear. */
-  duracion_calculada_min: number
-  estado: EstadoCita
-  qr_pase_caseta: string
+export interface RespuestaEtiqueta {
+  id_bulto: string
+  cadena_qr: string
+  longitud_cadena: number
+  version_qr: number
+  nivel_correccion: string
+  modulo_mm: number
+  medida_pulgadas: string
 }
 
-// ---------------------------------------------------------------------------
-// §6.2  GET /v1/andenes/disponibilidad
-// ---------------------------------------------------------------------------
-
-export type TipoAnden = 'recibo' | 'embarque' | 'flex'
-
-export interface FranjaOcupada {
-  inicio: FechaHoraIso
-  fin: FechaHoraIso
-  proveedor: string
-  folio_oc: FolioOc
+export interface RespuestaLote {
+  total: number
+  etiquetas: RespuestaEtiqueta[]
 }
 
-export interface AndenDisponibilidad {
-  numero: number
-  tipo: TipoAnden
-  /** Solo en los andenes flex: ventana en que aceptan recibo. */
-  recibo_desde?: string // "08:00"
-  recibo_hasta?: string // "13:00"
-  ocupadas: FranjaOcupada[]
-}
-
-export interface RespuestaDisponibilidad {
-  fecha: string // "2026-11-26"
-  capacidad_citas: number
-  reservadas: number
-  andenes: AndenDisponibilidad[]
-}
-
-// ---------------------------------------------------------------------------
-// §6.5  POST /v1/sync/eventos
-// ---------------------------------------------------------------------------
-
-export type EstadoBulto =
-  | 'ETIQUETADO'
-  | 'EN_TRANSITO'
-  | 'ESCANEADO_ANDEN'
-  | 'RECIBIDO'
-  | 'RECHAZADO'
-  | 'UBICADO'
-  | 'EN_ANDEN_SALIDA'
-  | 'ASIGNADO_EMBARQUE'
-  | 'CARGADO'
-  | 'EMBARCADO'
-  | 'RECIBIDO_SUCURSAL'
-  | 'NO_RECIBIDO'
-
-/**
- * Un rechazo NO es un error HTTP: es un resultado de negocio válido.
- * El endpoint responde 200 y el detalle viene por evento.
- */
-export type ResultadoEvento =
-  | 'aplicado'
-  | 'duplicado'
-  | 'rechazado_excedente'
-  | 'rechazado_sku_no_solicitado'
-  | 'rechazado_firma_invalida'
-  | 'rechazado_sin_registro'
-  | 'transicion_invalida'
-
-export interface DestinoAcomodo {
-  tipo: 'rack' | 'zona_flex' | 'cross_dock'
-  ubicacion?: string // "SUC14-N2-P05"
-  anden?: number
-}
-
-export interface EventoEscaneo {
-  /** Lo genera el dispositivo. Es la llave de la idempotencia (§7.3). */
-  uuid_evento: string
-  folio_bulto: FolioBulto
-  estado_destino: EstadoBulto
-  ocurrido_en: FechaHoraIso
+export interface SolicitudVerificacion {
   cadena_qr: string
 }
 
-export interface ResultadoEscaneo {
+export interface RespuestaVerificacion {
+  valida: boolean
+  motivo: string | null
+  id_bulto: string | null
+  orden_compra: string | null
+  proveedor: string | null
+  sucursal: string | null
+  sku: string | null
+  cantidad: number | null
+  peso_kg: number | null
+  volumen_m3: number | null
+}
+
+export interface SolicitudReimpresion {
+  id_bulto: string
+  motivo: string
+  operador: string
+}
+
+export interface RespuestaReimpresion {
+  folio_reimpresion: string
+  id_bulto: string
+  cadena_qr: string
+  zpl: string
+}
+
+// ---------------------------------------------------------------------------
+// /recepcion  (esquemas/recepcion.py)
+// ---------------------------------------------------------------------------
+
+/** Valores de `dominio.recepcion.Desenlace`. */
+export type Desenlace =
+  | 'ACEPTADO'
+  | 'DUPLICADO'
+  | 'RECHAZADO_EXCEDENTE'
+  | 'RECHAZADO_SKU_NO_SOLICITADO'
+  | 'RECHAZADO_FIRMA_INVALIDA'
+  | 'RECHAZADO_SIN_REGISTRO'
+
+/** POST /recepcion/escaneo. `uuid_evento` (36 chars) es la llave de idempotencia. */
+export interface SolicitudEscaneo {
+  cadena_qr: string
   uuid_evento: string
-  resultado: ResultadoEvento
-  estado_final: EstadoBulto
-  destino?: DestinoAcomodo
-  /** Texto para el operador cuando hubo rechazo. */
-  motivo?: string
-  folio_acta?: string
+  cita: string
+  dispositivo?: string | null
+  operador?: string | null
+  ocurrido_en?: FechaHoraIso | null
 }
 
-export interface RespuestaSync {
-  procesados: number
-  resultados: ResultadoEscaneo[]
+export interface DestinoSalida {
+  tipo: string
+  ubicacion: string
+  motivo: string
+}
+
+export interface RespuestaEscaneo {
+  desenlace: Desenlace | string
+  id_bulto: string
+  motivo: string
+  sku: string | null
+  cantidad: number
+  destino: DestinoSalida | null
+  acumulado_sku: number | null
+}
+
+export interface LineaFaltanteSalida {
+  sku: string
+  cantidad_solicitada: number
+  cantidad_recibida: number
+  cantidad_faltante: number
+  importe: number
+}
+
+/** POST /recepcion/cierre/{folio_cita}. 409 si ya estaba cerrada. */
+export interface RespuestaCierreCita {
+  cita: string
+  bultos_aceptados: number
+  bultos_rechazados: number
+  hay_faltantes: boolean
+  folio_acta: string | null
+  importe_nota_credito: number
+  faltantes: LineaFaltanteSalida[]
+}
+
+export interface LineaOCEntrada {
+  sku: string
+  cantidad_solicitada: number
+  precio_unitario?: number
+}
+
+export interface BultoEsperadoEntrada {
+  id_bulto: string
+  sku: string
+  cantidad: number
+}
+
+/** POST /recepcion/simulacion (no toca la base). */
+export interface SolicitudSimulacion {
+  lineas: LineaOCEntrada[]
+  esperados: BultoEsperadoEntrada[]
+  escaneos: string[]
+  ocupacion_embarque_abierto?: number | null
+  ubicacion_rack?: string | null
+}
+
+export interface RespuestaSimulacion {
+  resultados: RespuestaEscaneo[]
+  recibidos_por_sku: Record<string, number>
+  faltantes: LineaFaltanteSalida[]
+  importe_nota_credito: number
 }
 
 // ---------------------------------------------------------------------------
-// §6.7  GET /v1/consolidacion
+// /consolidacion  (esquemas/consolidacion.py)
 // ---------------------------------------------------------------------------
 
-export type ClaseUnidad = 'torton' | 'rabon' | 'camioneta_3_5'
+/** Valores de `dominio.consolidacion.ClaseUnidad`. */
+export type ClaseUnidadApi = 'CAMIONETA_3_5' | 'RABON' | 'TORTON'
 
-export type DecisionConsolidacion = 'liberar' | 'excepcion' | 'acumulando'
+/** Valores de `MotivoLiberacion`. */
+export type MotivoLiberacion = 'REGLA_90' | 'EXCEPCION_ANTIGUEDAD' | 'ACUMULANDO'
 
-export interface FilaConsolidacion {
-  sucursal: ClaveSucursal
-  nombre: string
-  tarimas: number
-  /** Posiciones de la unidad sugerida. El límite real es este, no el peso. */
-  posiciones_unidad: number
+export interface UnidadSalida {
+  clase: ClaseUnidadApi | string
+  posiciones: number
+  minimo_90: number
+  peso_max_kg: number
+  volumen_max_m3: number
+  costo_viaje: number
+}
+
+/** GET /consolidacion/catalogo */
+export interface RespuestaCatalogo {
+  unidades: UnidadSalida[]
+  volumen_tarima_m3: number
+  peso_max_tarima_kg: number
+  ocupacion_minima: number
+  horas_antiguedad_limite: number
+}
+
+/** POST /consolidacion/evaluar */
+export interface SolicitudEvaluacion {
+  sucursal: string
+  tarimas_acumuladas: number
   peso_kg: number
   volumen_m3: number
-  ocupacion: number // 0 a 1
-  unidad_sugerida: ClaseUnidad | null
   antiguedad_horas: number
-  decision: DecisionConsolidacion
 }
 
-export interface RespuestaConsolidacion {
-  generado_en: FechaHoraIso
-  listas_para_salir: number
-  en_alerta_36h: number
-  tarimas_en_rack: number
-  ocupacion_rack: number // 0 a 1
-  filas: FilaConsolidacion[]
+export interface RespuestaEvaluacion {
+  sucursal: string
+  liberar: boolean
+  motivo: MotivoLiberacion | string
+  requiere_acta: boolean
+  detalle: string
+  unidad: UnidadSalida | null
+  ocupacion: number | null
+}
+
+/** Una fila de GET /consolidacion/tablero. */
+export interface SemaforoSucursal {
+  sucursal: string
+  tarimas_acumuladas: number
+  antiguedad_horas: number
+  liberar: boolean
+  motivo: MotivoLiberacion | string
+  clase_unidad: ClaseUnidadApi | string | null
+  /** 0..1, null cuando ninguna unidad cumple todavía (ACUMULANDO). */
+  ocupacion: number | null
+  alerta_antiguedad: boolean
+}
+
+/** GET /consolidacion/tablero */
+export interface RespuestaTablero {
+  total_sucursales: number
+  liberables: number
+  en_alerta_antiguedad: number
+  filas: SemaforoSucursal[]
 }
 
 // ---------------------------------------------------------------------------
-// §6.4  GET /v1/citas/{folio}/paquete-offline
+// /embarques  (esquemas/embarques.py)
 // ---------------------------------------------------------------------------
 
-export interface LineaAutorizada {
-  sku: string
-  sucursal: ClaveSucursal
-  piezas_autorizadas: number
-  piezas_recibidas: number
-}
-
-export interface BultoEsperado {
-  folio: FolioBulto
-  sku: string
-  descripcion: string
-  sucursal: ClaveSucursal
-  piezas: number
+/** POST /embarques/liberar */
+export interface SolicitudLiberacion {
+  sucursal: string
+  tarimas: string[] // folios, 1..12
   peso_kg: number
   volumen_m3: number
-  /** La firma esperada. El handheld compara, no recalcula: la llave no viaja. */
-  firma: string
+  antiguedad_horas: number
+  sello_seguridad?: string | null
+  km_salida?: number | null
+  operador?: string | null
+  placas?: string | null
 }
 
-export interface PaqueteOffline {
-  folio_cita: FolioCita
+export interface RespuestaLiberacion {
+  folio: string // "" si no se liberó
+  sucursal: string
+  clase_unidad: string | null
+  motivo_liberacion: MotivoLiberacion | string
+  liberado: boolean
+  requiere_acta: boolean
+  folio_acta: string | null
+  ocupacion: number | null
+  detalle: string
+  liberado_en: FechaHoraIso | null
+}
+
+export interface DatosCartaPorte {
+  permiso_sict: string | null
+  configuracion_vehicular: string | null
+  placas: string | null
+  aseguradora: string | null
+  poliza: string | null
+  completo: boolean
+}
+
+/** GET /embarques/{folio}/relacion  (HTML en /relacion.html) */
+export interface RespuestaRelacionEmbarque {
+  folio: string
+  sucursal: string
+  clase_unidad: string | null
+  tarimas: string[]
+  peso_kg: number
+  volumen_m3: number
+  ocupacion: number
+  qr_maestro: string
+  sello_seguridad: string | null
+  km_salida: number | null
+  operador: string | null
+  carta_porte: DatosCartaPorte
   generado_en: FechaHoraIso
-  vigente_hasta: FechaHoraIso
-  kid_firma: string
-  autorizado: LineaAutorizada[]
-  bultos_esperados: BultoEsperado[]
+}
+
+/** POST /embarques/recepcion-sucursal */
+export interface SolicitudRecepcionSucursal {
+  qr_maestro: string
+  sucursal: string
+  tarimas_recibidas?: string[]
+}
+
+export interface RespuestaRecepcionSucursal {
+  folio: string
+  conciliado: boolean
+  tarimas_esperadas: number
+  tarimas_recibidas: number
+  faltantes: string[]
+}
+
+// ---------------------------------------------------------------------------
+// /salud
+// ---------------------------------------------------------------------------
+
+export interface RespuestaSalud {
+  estado: string
+  servicio: string
+  version: string
 }
