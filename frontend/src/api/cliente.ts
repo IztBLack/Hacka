@@ -16,6 +16,8 @@ import type {
   RespuestaCierreCita,
   RespuestaCita,
   RespuestaEscaneo,
+  RespuestaEtiquetasCita,
+  ResumenCita,
   RespuestaSalud,
   RespuestaSlots,
   RespuestaTablero,
@@ -94,6 +96,10 @@ export const api = {
   capacidad: () => pedir<RespuestaCapacidad>('/citas/capacidad'),
   slots: (s: SolicitudSlots) => post<RespuestaSlots>('/citas/slots', s),
   reservarCita: (s: SolicitudCita) => post<RespuestaCita>('/citas', s),
+  citas: (fecha?: string) =>
+    pedir<ResumenCita[]>(fecha ? `/citas?fecha=${encodeURIComponent(fecha)}` : '/citas'),
+  etiquetasCita: (folio: string) =>
+    pedir<RespuestaEtiquetasCita>(`/citas/${encodeURIComponent(folio)}/etiquetas`),
 
   escanear: (s: SolicitudEscaneo) => post<RespuestaEscaneo>('/recepcion/escaneo', s),
   cerrarCita: (folio: string) =>
@@ -143,6 +149,22 @@ export function useReservarCita() {
     mutationFn: api.reservarCita,
     onSuccess: (cita) => {
       void clienteQuery.invalidateQueries({ queryKey: ['citas', 'slots', cita.fecha] })
+      // La cita nueva aparece de inmediato en el selector de etiquetas (C4).
+      void clienteQuery.invalidateQueries({ queryKey: ['citas', 'lista'] })
     },
+  })
+}
+
+/** Citas registradas, las más recientes primero (selector de C4). */
+export function useCitas() {
+  return useQuery({ queryKey: ['citas', 'lista'] as const, queryFn: () => api.citas() })
+}
+
+/** Etiquetas firmadas de una cita: lo que C4 imprime y C2 escanea. */
+export function useEtiquetasCita(folio: string | null) {
+  return useQuery({
+    queryKey: ['citas', 'etiquetas', folio] as const,
+    queryFn: () => api.etiquetasCita(folio as string),
+    enabled: folio !== null,
   })
 }

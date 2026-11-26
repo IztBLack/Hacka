@@ -2,9 +2,11 @@
 
 from __future__ import annotations
 
+from datetime import date
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, status
+from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
@@ -19,16 +21,21 @@ from app.dominio.citas import (
     slots_disponibles,
 )
 from app.esquemas.citas import (
+    BultoEtiqueta,
     RespuestaCapacidad,
     RespuestaCita,
     RespuestaDuracion,
+    RespuestaEtiquetasCita,
     RespuestaSlots,
+    ResumenCita,
     SlotLibre,
     SolicitudCita,
     SolicitudDuracion,
     SolicitudSlots,
 )
-from app.modelos import Cita
+from app.modelos import Cita, LineaOrdenCompra, OrdenCompra, Proveedor
+from app.modelos.catalogos import Sucursal
+from app.servicios.desglose import asegurar_desglose, bultos_de_cita
 from app.servicios.repositorios import (
     RepositorioCitas,
     RepositorioOrdenes,
@@ -191,6 +198,11 @@ def reservar_cita(
                 status.HTTP_409_CONFLICT, "el andén se ocupó mientras se reservaba"
             ) from exc
 
+    # Cita confirmada => sus etiquetas quedan listas para imprimir (C4) y
+    # para el paquete del handheld (C2).
+    asegurar_desglose(sesion, cita)
+    sesion.commit()
+
     return RespuestaCita(
         folio=cita.folio,
         proveedor=solicitud.proveedor,
@@ -202,4 +214,79 @@ def reservar_cita(
         duracion_minutos=cita.duracion_minutos,
         estado=cita.estado,
         cfdi_validado=cfdi_validado,
+    )
+
+
+def _resumen(sesion: Session, cita: Cita) -> ResumenCita:
+    proveedor = sesion.get(Proveedor, cita.proveedor_id)
+    orden = sesion.get(OrdenCompra, cita.orden_compra_id)
+    return ResumenCita(
+        folio=cita.folio,
+        proveedor=proveedor.clave if proveedor else "",
+        razon_social=proveedor.razon_social if proveedor else "",
+        orden_compra=orden.folio if orden else "",
+        fecha=cita.fecha,
+        anden=cita.anden,
+        hora_inicio=cita.hora_inicio,
+        hora_fin=cita.hora_fin,
+        n_bultos=cita.n_bultos_declarados,
+        estado=cita.estado,
+    )
+
+
+@router.get("", response_model=list[ResumenCita])
+def listar_citas(sesion: SesionDep, fecha: date | None = None) -> list[ResumenCita]:
+    """Citas (todas o las de un día), la última reservada primero.
+
+    C4 abre por omisión la primera: es la que el proveedor acaba de crear.
+    """
+    consulta = select(Cita).order_by(Cita.id.desc())
+    if fecha is not None:
+        consulta = consulta.where(Cita.fecha == fecha)
+    return [_resumen(sesion, c) for c in sesion.scalars(consulta.limit(200)).all()]
+
+
+@router.get("/{folio}/etiquetas", response_model=RespuestaEtiquetasCita)
+def etiquetas_de_cita(folio: str, sesion: SesionDep) -> RespuestaEtiquetasCita:
+    """Etiquetas de la cita, con la cadena QR firmada tal como se imprime.
+
+    Si la cita es anterior al desglose automático, lo genera aquí.
+    """
+    cita = RepositorioCitas(sesion).por_folio(folio)
+    if cita is None:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "cita no encontrada")
+
+    bultos = bultos_de_cita(sesion, cita)
+    if not bultos:
+        bultos = asegurar_desglose(sesion, cita)
+        sesion.commit()
+
+    descripciones = dict(
+        sesion.execute(
+            select(LineaOrdenCompra.sku, LineaOrdenCompra.descripcion).where(
+                LineaOrdenCompra.orden_compra_id == cita.orden_compra_id
+            )
+        ).all()
+    )
+    nombres = dict(sesion.execute(select(Sucursal.clave, Sucursal.nombre)).all())
+
+    return RespuestaEtiquetasCita(
+        cita=_resumen(sesion, cita),
+        total=len(bultos),
+        bultos=[
+            BultoEtiqueta(
+                id_bulto=b.id_bulto,
+                secuencia=i,
+                sku=b.sku,
+                descripcion=descripciones.get(b.sku) or "",
+                sucursal=b.sucursal,
+                nombre_sucursal=nombres.get(b.sucursal, ""),
+                cantidad=b.cantidad,
+                peso_kg=b.peso_kg,
+                volumen_m3=b.volumen_m3,
+                estado=b.estado,
+                cadena_qr=b.cadena_qr,
+            )
+            for i, b in enumerate(bultos, start=1)
+        ],
     )

@@ -307,7 +307,10 @@ export default function Portal() {
                 Andén {reserva.anden} · {aHora(reserva.desde)} – {aHora(reserva.hasta)} del 26 de noviembre.
                 Se liberaron las {nBultos} etiquetas QR firmadas.
               </p>
-              <Link to="/etiquetas" className="boton-primario mt-3 inline-block no-underline">
+              <Link
+                to={folioCita ? `/etiquetas?cita=${encodeURIComponent(folioCita)}` : '/etiquetas'}
+                className="boton-primario mt-3 inline-block no-underline"
+              >
                 Descargar etiquetas
               </Link>
             </div>
