@@ -13,7 +13,7 @@
 import { useEffect, useRef, useState } from 'react'
 import QRCode from 'qrcode'
 import { PAQUETE_DEMO } from '../datos/paquete'
-import type { BultoEsperado } from '../tipos/api'
+import type { BultoEsperado } from '../tipos/vista'
 
 const OC = 'OC-88213'
 const PROVEEDOR = 'PRV-0147'
@@ -148,6 +148,7 @@ export default function Etiquetas() {
   return (
     <div className="min-h-screen bg-piso p-6">
       <style>{`
+        @page { size: 4in 6in; margin: 0; }
         @media print {
           .no-imprimir { display: none !important; }
           body { background: #fff; }

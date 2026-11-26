@@ -10,7 +10,7 @@
  * la llave.
  */
 
-import type { PaqueteOffline } from '../tipos/api'
+import type { PaqueteOffline } from '../tipos/vista'
 
 export const PAQUETE_DEMO: PaqueteOffline = {
   folio_cita: 'CITA-2026-04412',
@@ -68,7 +68,7 @@ export const ETIQUETAS_EN_CAMION: EtiquetaFisica[] = [
   {
     id: 'excedente',
     cadena: qr('B00447', 'SKU-993201', 'SUC-14', 24, 18.4, 0.42, 'TM4XQ2PJWNDLA'),
-    nota: 'Rebasa las 480 piezas autorizadas',
+    nota: 'Rebasa las 480 piezas autorizadas (escanéela después de la normal)',
   },
   {
     id: 'alterada',

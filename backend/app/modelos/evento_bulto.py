@@ -41,7 +41,7 @@ class EventoBulto(Base):
     dispositivo: Mapped[str | None] = mapped_column(String(32))
     operador: Mapped[str | None] = mapped_column(String(64))
 
-    bulto: Mapped["Bulto"] = relationship(back_populates="eventos")  # noqa: F821
+    bulto: Mapped[Bulto] = relationship(back_populates="eventos")  # noqa: F821
 
     def __repr__(self) -> str:
         return f"<EventoBulto {self.uuid_evento} {self.estado}>"

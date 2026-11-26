@@ -54,7 +54,7 @@ class Embarque(Base, MixinFechas):
     permiso_sict: Mapped[str | None] = mapped_column(String(32))
     uuid_carta_porte: Mapped[str | None] = mapped_column(String(36))
 
-    tarimas: Mapped[list["Tarima"]] = relationship(  # noqa: F821
+    tarimas: Mapped[list[Tarima]] = relationship(  # noqa: F821
         back_populates="embarque"
     )
 

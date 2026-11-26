@@ -4,6 +4,7 @@
 #   ./respaldo_pg.sh verificar ARCHIVO      -> restaura en BD temporal y compara conteos
 #   CONFIRMAR=si ./respaldo_pg.sh restaurar ARCHIVO [BD_DESTINO]
 set -euo pipefail
+umask 077  # los .dump traen datos de proveedores: solo el dueño los lee
 
 CONTENEDOR="${CONTENEDOR:-cedis-postgres}"
 BD="${BD:-cedis}"
@@ -26,10 +27,13 @@ conteos() {  # conteo de filas por tabla pública, ordenado, para comparar BDs
 respaldar() {
   mkdir -p "$DIR_RESPALDOS"
   local archivo="$DIR_RESPALDOS/${BD}_$(date +%Y%m%d_%H%M%S).dump"
+  # Si pg_dump falla no debe quedar un .dump parcial que parezca válido.
+  trap 'rm -f "$archivo" "$archivo.sha256"' ERR
   docker exec "$CONTENEDOR" pg_dump -U "$USUARIO" -d "$BD" -Fc -Z 9 > "$archivo"
   # Integridad básica: el archivo debe ser legible por pg_restore.
   docker exec -i "$CONTENEDOR" pg_restore --list < "$archivo" > /dev/null
   sha256sum "$archivo" > "$archivo.sha256"
+  trap - ERR
   echo "Respaldo OK: $archivo"
 }
 
@@ -41,7 +45,16 @@ verificar() {
   psql_admin -c "CREATE DATABASE \"$temporal\""
   docker exec -i "$CONTENEDOR" pg_restore -U "$USUARIO" -d "$temporal" \
     --no-owner --exit-on-error < "$archivo"
-  if diff <(conteos "$BD") <(conteos "$temporal"); then
+  # Capturados en variables (no con <(...)) para que `set -e` aborte si psql
+  # falla: dos salidas vacías no son "conteos idénticos".
+  local origen restaurada
+  origen="$(conteos "$BD")"
+  restaurada="$(conteos "$temporal")"
+  if [[ -z "$origen" || -z "$restaurada" ]]; then
+    echo "ERROR: no se pudieron leer los conteos." >&2
+    exit 1
+  fi
+  if diff <(printf '%s\n' "$origen") <(printf '%s\n' "$restaurada"); then
     echo "Restauración verificada: conteos idénticos a $BD."
   else
     echo "ERROR: los conteos difieren entre $BD y la restauración." >&2

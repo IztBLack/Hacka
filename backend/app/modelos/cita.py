@@ -47,7 +47,7 @@ class Cita(Base, MixinFechas):
     minutos_tolerancia: Mapped[int] = mapped_column(Integer, default=15)
     pase_caseta: Mapped[str | None] = mapped_column(String(64))
 
-    bultos: Mapped[list["Bulto"]] = relationship(back_populates="cita")  # noqa: F821
+    bultos: Mapped[list[Bulto]] = relationship(back_populates="cita")  # noqa: F821
 
     def __repr__(self) -> str:
         return f"<Cita {self.folio} anden={self.anden} {self.hora_inicio}-{self.hora_fin}>"

@@ -29,10 +29,17 @@ from app.esquemas.citas import (
     SolicitudSlots,
 )
 from app.modelos import Cita
-from app.servicios.repositorios import RepositorioCitas, RepositorioOrdenes
+from app.servicios.repositorios import (
+    RepositorioCitas,
+    RepositorioOrdenes,
+    restriccion_violada,
+)
 from app.servicios.sat import ValidadorSAT, obtener_validador
 
 router = APIRouter()
+
+# Reintentos si dos reservas simultáneas calculan el mismo folio del día.
+INTENTOS_FOLIO = 3
 
 SesionDep = Annotated[Session, Depends(obtener_sesion)]
 ValidadorDep = Annotated[ValidadorSAT, Depends(obtener_validador)]
@@ -151,24 +158,38 @@ def reservar_cita(
         )
         raise HTTPException(status.HTTP_409_CONFLICT, motivo)
 
-    cita = Cita(
-        folio=repo_citas.siguiente_folio(solicitud.fecha),
-        proveedor_id=proveedor.id,
-        orden_compra_id=orden.id,
-        fecha=solicitud.fecha,
-        anden=solicitud.anden,
-        hora_inicio=nueva.inicio,
-        hora_fin=nueva.fin,
-        n_bultos_declarados=solicitud.n_bultos,
-        duracion_minutos=duracion,
-    )
-    try:
-        repo_citas.guardar(cita)
-    except IntegrityError as exc:
-        sesion.rollback()
-        raise HTTPException(
-            status.HTTP_409_CONFLICT, "el andén se ocupó mientras se reservaba"
-        ) from exc
+    # El folio se calcula sin candado; si otra reserva simultánea tomó el
+    # mismo consecutivo, `ix_cita_folio` lo detecta y se reintenta con el
+    # siguiente. Un choque de andén, en cambio, es definitivo (409).
+    for intento in range(INTENTOS_FOLIO):
+        cita = Cita(
+            folio=repo_citas.siguiente_folio(solicitud.fecha),
+            proveedor_id=proveedor.id,
+            orden_compra_id=orden.id,
+            fecha=solicitud.fecha,
+            anden=solicitud.anden,
+            hora_inicio=nueva.inicio,
+            hora_fin=nueva.fin,
+            n_bultos_declarados=solicitud.n_bultos,
+            duracion_minutos=duracion,
+        )
+        try:
+            repo_citas.guardar(cita)
+            break
+        except IntegrityError as exc:
+            sesion.rollback()
+            restriccion = restriccion_violada(exc)
+            if restriccion == "ix_cita_folio" and intento + 1 < INTENTOS_FOLIO:
+                continue
+            if restriccion == "ix_cita_folio":
+                raise HTTPException(
+                    status.HTTP_503_SERVICE_UNAVAILABLE,
+                    "no se pudo asignar folio por concurrencia; reintente",
+                ) from exc
+            # Exclusión o unicidad de andén (o motor sin nombre de restricción).
+            raise HTTPException(
+                status.HTTP_409_CONFLICT, "el andén se ocupó mientras se reservaba"
+            ) from exc
 
     return RespuestaCita(
         folio=cita.folio,

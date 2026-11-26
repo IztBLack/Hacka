@@ -9,10 +9,10 @@ como recibo de 8:00 a 13:00) cierra el déficit sin comprar nada.
 
 from __future__ import annotations
 
+from collections.abc import Sequence
 from dataclasses import dataclass, replace
 from datetime import time, timedelta
 from math import ceil, floor
-from typing import Sequence
 
 __all__ = [
     "Franja",
@@ -70,7 +70,7 @@ class Franja:
     @classmethod
     def desde_duracion(
         cls, inicio: time, minutos: int, anden: int | None = None
-    ) -> "Franja":
+    ) -> Franja:
         """Construye la franja a partir de su duración en minutos."""
         if minutos <= 0:
             raise ValueError("la duración debe ser positiva")
@@ -88,7 +88,7 @@ class Franja:
     def duracion(self) -> timedelta:
         return timedelta(minutes=self.minuto_fin - self.minuto_inicio)
 
-    def con_maniobra(self, minutos_maniobra: int = MINUTOS_MANIOBRA) -> "Franja":
+    def con_maniobra(self, minutos_maniobra: int = MINUTOS_MANIOBRA) -> Franja:
         """La misma franja extendida por el tiempo de maniobra posterior.
 
         El andén no queda libre en el instante en que el camión termina de

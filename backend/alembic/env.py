@@ -2,16 +2,18 @@
 
 from logging.config import fileConfig
 
-from alembic import context
 from sqlalchemy import engine_from_config, pool
 
 import app.modelos  # noqa: F401  (registra todas las tablas en Base.metadata)
+from alembic import context
 from app.config import settings
 from app.db import Base
 
 config = context.config
 if config.config_file_name is not None:
-    fileConfig(config.config_file_name)
+    # Sin esto, correr migraciones dentro de pytest o de la app apaga los
+    # loggers ya creados (uvicorn, app) para el resto del proceso.
+    fileConfig(config.config_file_name, disable_existing_loggers=False)
 
 target_metadata = Base.metadata
 

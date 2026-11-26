@@ -1,6 +1,6 @@
 """Modelos ORM del CEDIS. Importar este paquete registra todas las tablas en Base."""
 
-from app.modelos.acta import Acta
+from app.modelos.acta import Acta, TipoActa
 from app.modelos.bulto import Bulto
 from app.modelos.catalogos import Anden, Sucursal, Ubicacion, Usuario
 from app.modelos.cita import Cita
@@ -24,6 +24,7 @@ __all__ = [
     "Proveedor",
     "Sucursal",
     "Tarima",
+    "TipoActa",
     "Ubicacion",
     "Usuario",
 ]

@@ -46,8 +46,8 @@ class Bulto(Base, MixinFechas):
     motivo_rechazo: Mapped[str | None] = mapped_column(String(200))
     folio_reimpresion: Mapped[str | None] = mapped_column(String(32))
 
-    cita: Mapped["Cita | None"] = relationship(back_populates="bultos")  # noqa: F821
-    eventos: Mapped[list["EventoBulto"]] = relationship(  # noqa: F821
+    cita: Mapped[Cita | None] = relationship(back_populates="bultos")  # noqa: F821
+    eventos: Mapped[list[EventoBulto]] = relationship(  # noqa: F821
         back_populates="bulto", cascade="all, delete-orphan"
     )
 

@@ -41,7 +41,7 @@ class OrdenCompra(Base, MixinFechas):
     estado: Mapped[str] = mapped_column(String(24), default="ABIERTA")
     importe_total: Mapped[float] = mapped_column(Float, default=0.0)
 
-    lineas: Mapped[list["LineaOrdenCompra"]] = relationship(
+    lineas: Mapped[list[LineaOrdenCompra]] = relationship(
         back_populates="orden_compra", cascade="all, delete-orphan"
     )
 

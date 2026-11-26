@@ -14,7 +14,7 @@ import type {
   RespuestaCita,
   RespuestaConsolidacion,
   RespuestaDisponibilidad,
-} from '../tipos/api'
+} from '../tipos/vista'
 
 export const PROVEEDOR_DEMO = {
   clave: 'PRV-0147',
@@ -115,9 +115,9 @@ export const CONSOLIDACION_DEMO: RespuestaConsolidacion = {
   tarimas_en_rack: 312,
   ocupacion_rack: 0.3,
   filas: [
-    { sucursal: 'SUC-03', nombre: 'Centro', tarimas: 11, posiciones_unidad: 12, peso_kg: 11240, volumen_m3: 26.8, ocupacion: 1, unidad_sugerida: 'torton', antiguedad_horas: 14, decision: 'liberar' },
-    { sucursal: 'SUC-14', nombre: 'Plaza Oriente', tarimas: 11, posiciones_unidad: 12, peso_kg: 10840, volumen_m3: 26.2, ocupacion: 1, unidad_sugerida: 'torton', antiguedad_horas: 9, decision: 'liberar' },
-    { sucursal: 'SUC-07', nombre: 'Norte', tarimas: 9, posiciones_unidad: 12, peso_kg: 8960, volumen_m3: 21.4, ocupacion: 0.82, unidad_sugerida: null, antiguedad_horas: 22, decision: 'acumulando' },
+    { sucursal: 'SUC-03', nombre: 'Centro', tarimas: 11, posiciones_unidad: 12, peso_kg: 11240, volumen_m3: 26.8, ocupacion: 0.92, unidad_sugerida: 'torton', antiguedad_horas: 14, decision: 'liberar' },
+    { sucursal: 'SUC-14', nombre: 'Plaza Oriente', tarimas: 11, posiciones_unidad: 12, peso_kg: 10840, volumen_m3: 26.2, ocupacion: 0.92, unidad_sugerida: 'torton', antiguedad_horas: 9, decision: 'liberar' },
+    { sucursal: 'SUC-07', nombre: 'Norte', tarimas: 9, posiciones_unidad: 12, peso_kg: 8960, volumen_m3: 21.4, ocupacion: 0.75, unidad_sugerida: null, antiguedad_horas: 22, decision: 'acumulando' },
     { sucursal: 'SUC-21', nombre: 'Las Flores', tarimas: 6, posiciones_unidad: 6, peso_kg: 5720, volumen_m3: 14.3, ocupacion: 1, unidad_sugerida: 'rabon', antiguedad_horas: 17, decision: 'liberar' },
     { sucursal: 'SUC-28', nombre: 'Industrial', tarimas: 5, posiciones_unidad: 6, peso_kg: 4810, volumen_m3: 11.9, ocupacion: 0.83, unidad_sugerida: 'rabon', antiguedad_horas: 41, decision: 'excepcion' },
     { sucursal: 'SUC-11', nombre: 'Sur', tarimas: 4, posiciones_unidad: 6, peso_kg: 3900, volumen_m3: 9.5, ocupacion: 0.67, unidad_sugerida: 'rabon', antiguedad_horas: 38, decision: 'excepcion' },

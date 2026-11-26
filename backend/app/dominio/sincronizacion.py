@@ -17,8 +17,8 @@ y los eventos vistos, llama a `procesar_lote` y persiste lo que cambió.
 
 from __future__ import annotations
 
+from collections.abc import Iterable
 from dataclasses import dataclass, field
-from typing import Iterable
 
 from app.dominio.recepcion import (
     EstadoRecepcion,

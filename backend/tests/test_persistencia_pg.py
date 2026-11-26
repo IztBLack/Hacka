@@ -11,13 +11,13 @@ from pathlib import Path
 from typing import Any
 
 import pytest
-from alembic import command
 from alembic.config import Config
 from sqlalchemy import create_engine, func, select, text
 from sqlalchemy.engine import Engine, make_url
 from sqlalchemy.exc import IntegrityError, OperationalError
 from sqlalchemy.orm import Session
 
+from alembic import command
 from app.config import settings
 from app.db import ahora_utc
 from app.modelos import Bulto, Cita, EventoBulto, OrdenCompra, Proveedor

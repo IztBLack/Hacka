@@ -4,7 +4,16 @@ from __future__ import annotations
 
 from datetime import datetime
 
-from sqlalchemy import CheckConstraint, DateTime, Float, ForeignKey, Index, Integer, String, text
+from sqlalchemy import (
+    CheckConstraint,
+    DateTime,
+    Float,
+    ForeignKey,
+    Index,
+    Integer,
+    String,
+    text,
+)
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db import Base, MixinFechas, ahora_utc
@@ -45,7 +54,7 @@ class Tarima(Base, MixinFechas):
     estado: Mapped[str] = mapped_column(String(16), default="EN_RACK", index=True)
     posicion_unidad: Mapped[int | None] = mapped_column(Integer)
 
-    embarque: Mapped["Embarque | None"] = relationship(  # noqa: F821
+    embarque: Mapped[Embarque | None] = relationship(  # noqa: F821
         back_populates="tarimas"
     )
 

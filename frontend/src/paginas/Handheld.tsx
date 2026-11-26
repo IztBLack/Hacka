@@ -20,7 +20,7 @@ import {
   parsearQr,
   type EstadoLocal,
 } from '../dispositivo/reglasLocales'
-import type { ResultadoEscaneo } from '../tipos/api'
+import type { ResultadoEscaneo } from '../tipos/vista'
 
 interface EnCola {
   uuid_evento: string
@@ -105,7 +105,7 @@ export default function Handheld() {
               <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-linea">
                 <div
                   className="h-full bg-azul transition-all"
-                  style={{ width: `${Math.min(100, (recibidos / TOTAL_BULTOS) * 100 + 28)}%` }}
+                  style={{ width: `${Math.min(100, ((41 + recibidos) / TOTAL_BULTOS) * 100)}%` }}
                 />
               </div>
               <div className="mt-1.5 flex justify-between text-[11.5px] text-apagado">
@@ -119,7 +119,7 @@ export default function Handheld() {
             </div>
 
             {banner && ultimo ? (
-              <div className={`px-4 py-7 text-center text-white ${fondoBanner}`}>
+              <div role="status" aria-live="assertive" className={`px-4 py-7 text-center text-white ${fondoBanner}`}>
                 {banner.tono === 'rojo' ? (
                   <svg
                     width="58"
@@ -172,6 +172,7 @@ export default function Handheld() {
             <div className="flex-grow space-y-3 overflow-y-auto p-4">
               {ultimo?.motivo && (
                 <div
+                  role="status"
                   className={`rounded-[9px] border p-3.5 ${
                     ES_RECHAZO[ultimo.resultado]
                       ? 'border-rojo-bd bg-rojo-bg'
@@ -303,7 +304,7 @@ export default function Handheld() {
               <li>Escanee la primera etiqueta: entra, y el sistema la manda a cross-dock.</li>
               <li>Escanéela otra vez: responde duplicado y no la cuenta dos veces.</li>
               <li>
-                Escanee la del excedente: la OC autoriza 480 piezas, ya hay 456, y 24 más no caben.
+                Escanee la del excedente: la OC autoriza 480 piezas, ya había 456 y la primera sumó 24. Llegó al tope: 24 más no caben.
               </li>
               <li>Escanee la alterada: la firma no corresponde y se rechaza.</li>
               <li>Corte la red y siga escaneando: la cola crece y la recepción no se detiene.</li>

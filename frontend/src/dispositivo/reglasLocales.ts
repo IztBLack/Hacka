@@ -11,7 +11,7 @@
  * 150 ms y para que la descarga no se detenga si se cae el Wi-Fi.
  */
 
-import type { PaqueteOffline, ResultadoEscaneo, ResultadoEvento } from '../tipos/api'
+import type { PaqueteOffline, ResultadoEscaneo, ResultadoEvento } from '../tipos/vista'
 
 export interface CamposQr {
   version: string
@@ -75,6 +75,19 @@ export function estadoInicial(paquete: PaqueteOffline): EstadoLocal {
   }
 }
 
+/**
+ * `crypto.randomUUID` solo existe en HTTPS o localhost. Proyectando la demo
+ * por IP de LAN (http://192.168.x.x) no existe, así que se arma a mano.
+ */
+function nuevoUuid(): string {
+  if (typeof crypto.randomUUID === 'function') return crypto.randomUUID()
+  const b = crypto.getRandomValues(new Uint8Array(16))
+  b[6] = (b[6] & 0x0f) | 0x40
+  b[8] = (b[8] & 0x3f) | 0x80
+  const h = Array.from(b, (x) => x.toString(16).padStart(2, '0')).join('')
+  return `${h.slice(0, 8)}-${h.slice(8, 12)}-${h.slice(12, 16)}-${h.slice(16, 20)}-${h.slice(20)}`
+}
+
 /** Umbral de cross-dock de la propuesta §B.5. */
 const UMBRAL_CROSS_DOCK = 0.7
 
@@ -90,7 +103,7 @@ export function evaluarEscaneo(
   paquete: PaqueteOffline,
   estado: EstadoLocal,
 ): { resultado: ResultadoEscaneo; estado: EstadoLocal } {
-  const uuid_evento = crypto.randomUUID()
+  const uuid_evento = nuevoUuid()
 
   const rechazo = (resultado: ResultadoEvento, motivo: string) => ({
     resultado: { uuid_evento, resultado, estado_final: 'RECHAZADO' as const, motivo },
@@ -112,8 +125,17 @@ export function evaluarEscaneo(
     )
   }
 
-  // 2. ¿La firma corresponde? El equipo compara contra la esperada, no recalcula.
-  if (campos.firma !== esperado.firma || campos.piezas !== esperado.piezas) {
+  // 2. ¿La firma corresponde? El equipo compara contra la esperada, no recalcula,
+  // así que compara TODOS los campos firmados: si no, una etiqueta con la firma
+  // original y la sucursal o el SKU cambiados pasaría.
+  const alterada =
+    campos.firma !== esperado.firma ||
+    campos.piezas !== esperado.piezas ||
+    campos.sku !== esperado.sku ||
+    campos.sucursal !== esperado.sucursal ||
+    campos.peso_kg !== esperado.peso_kg ||
+    campos.volumen_m3 !== esperado.volumen_m3
+  if (alterada) {
     return rechazo(
       'rechazado_firma_invalida',
       'La etiqueta no coincide con la que emitió el sistema. Puede estar alterada o fotocopiada.',

@@ -9,7 +9,7 @@
  * entregue el endpoint, este archivo se borra y `Portal.tsx` llama a la API.
  */
 
-import type { AndenDisponibilidad, FranjaOcupada } from '../tipos/api'
+import type { AndenDisponibilidad, FranjaOcupada } from '../tipos/vista'
 
 export const HORA_APERTURA = 8
 export const HORA_CIERRE = 18
@@ -23,8 +23,17 @@ export function duracionMinutos(nBultos: number): { calculada: number; reservada
   return { calculada, reservada }
 }
 
-export function minutosDe(iso: string): number {
-  const [hh, mm] = iso.slice(11, 16).split(':').map(Number)
+/**
+ * Minutos desde medianoche, hora de PARED del CEDIS.
+ *
+ * Acepta el ISO de la demo ("2026-11-26T08:00:00Z") o el `time` sin zona del
+ * backend ("08:00:00"). En ambos casos se leen los dígitos HH:MM tal cual: la
+ * "Z" de la demo NO se interpreta como UTC (no se usa `new Date()`), porque
+ * convertirla a la zona del navegador correría la malla 6 horas.
+ */
+export function minutosDe(valor: string): number {
+  const hhmm = valor.includes('T') ? valor.slice(11, 16) : valor.slice(0, 5)
+  const [hh, mm] = hhmm.split(':').map(Number)
   return hh * 60 + mm
 }
 
@@ -113,7 +122,11 @@ export function intentarReservar(
   }
 
   const rangos = ocupadasComoRangos(anden.ocupadas)
-  const idx = rangos.findIndex((e) => inicioMin < e.hasta && e.desde < finMin)
+  // La nueva también lleva su maniobra al final, igual que en el backend
+  // (`franja.con_maniobra`): sin esto, una cita que termina 09:00 "cabe" antes
+  // de otra que empieza 09:00.
+  const finConManiobra = finMin + MINUTOS_MANIOBRA
+  const idx = rangos.findIndex((e) => inicioMin < e.hasta && e.desde < finConManiobra)
   if (idx >= 0) {
     const cita = anden.ocupadas[idx]
     const libreA = aHora(minutosDe(cita.fin) + MINUTOS_MANIOBRA)
