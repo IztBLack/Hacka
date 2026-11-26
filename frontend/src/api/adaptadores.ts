@@ -71,8 +71,8 @@ export function filaAVista(
     nombre: nombres[f.sucursal] ?? '',
     tarimas: f.tarimas_acumuladas,
     posiciones_unidad: posiciones,
-    peso_kg: null, // el tablero real no lo reporta por sucursal
-    volumen_m3: 0,
+    peso_kg: f.peso_kg ?? null,
+    volumen_m3: f.volumen_m3 ?? 0,
     ocupacion: f.ocupacion ?? Math.min(1, f.tarimas_acumuladas / posiciones),
     unidad_sugerida: f.clase_unidad ? (CLASE_VISTA[f.clase_unidad] ?? null) : null,
     antiguedad_horas: f.antiguedad_horas,

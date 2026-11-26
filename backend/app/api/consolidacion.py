@@ -122,6 +122,8 @@ def consultar_tablero(sesion: SesionDep) -> RespuestaTablero:
                     else None
                 ),
                 alerta_antiguedad=antiguedad >= settings.horas_antiguedad_limite,
+                peso_kg=round(sum(t.peso_kg for t in lote)),
+                volumen_m3=round(sum(t.volumen_m3 for t in lote), 2),
             )
         )
 
