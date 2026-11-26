@@ -94,6 +94,42 @@ export interface RespuestaCita {
   cfdi_validado: boolean
 }
 
+/** GET /citas (elemento) */
+export interface ResumenCita {
+  folio: string
+  proveedor: string
+  razon_social: string
+  orden_compra: string
+  fecha: FechaIso
+  anden: number
+  hora_inicio: HoraLocal
+  hora_fin: HoraLocal
+  n_bultos: number
+  estado: string
+}
+
+/** Una etiqueta 4" x 6" tal como la guarda el servidor. */
+export interface BultoEtiqueta {
+  id_bulto: string
+  secuencia: number
+  sku: string
+  descripcion: string
+  sucursal: string
+  nombre_sucursal: string
+  cantidad: number
+  peso_kg: number
+  volumen_m3: number
+  estado: string
+  cadena_qr: string
+}
+
+/** GET /citas/{folio}/etiquetas */
+export interface RespuestaEtiquetasCita {
+  cita: ResumenCita
+  total: number
+  bultos: BultoEtiqueta[]
+}
+
 /** GET /citas/capacidad */
 export interface RespuestaCapacidad {
   andenes_recibo: number
