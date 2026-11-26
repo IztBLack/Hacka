@@ -49,6 +49,8 @@ class SemaforoSucursal(BaseModel):
     clase_unidad: str | None = None
     ocupacion: float | None = None
     alerta_antiguedad: bool = False
+    peso_kg: float = 0.0
+    volumen_m3: float = 0.0
 
 
 class RespuestaTablero(BaseModel):

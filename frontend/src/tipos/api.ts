@@ -349,6 +349,8 @@ export interface SemaforoSucursal {
   /** 0..1, null cuando ninguna unidad cumple todavía (ACUMULANDO). */
   ocupacion: number | null
   alerta_antiguedad: boolean
+  peso_kg: number
+  volumen_m3: number
 }
 
 /** GET /consolidacion/tablero */

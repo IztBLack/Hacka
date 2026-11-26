@@ -6,21 +6,22 @@ eventos) y deja solo:
   * 2 proveedores;
   * 3 citas de ejemplo con sus etiquetas firmadas (C4);
   * 2 órdenes de compra sin cita, listas para reservar en el Portal (C1).
-    `OC-88213` es la que usa el Portal.
+    `OC-88213` es la que usa el Portal;
+  * tarimas en rack de 9 sucursales para el Tablero (C3).
 
 Uso: cd backend && python -m semillas.demo_limpia --confirmar
 """
 
 import sys
-from datetime import date, time
+from datetime import date, time, timedelta
 from decimal import Decimal
 
-from sqlalchemy import delete, text
+from sqlalchemy import delete, select, text
 from sqlalchemy.orm import Session
 
-from app.db import FabricaSesion
+from app.db import FabricaSesion, ahora_utc
 from app.dominio.citas import Franja, duracion_minutos
-from app.modelos import Cita, LineaOrdenCompra, OrdenCompra, Proveedor
+from app.modelos import Cita, LineaOrdenCompra, OrdenCompra, Proveedor, Sucursal, Tarima
 from app.servicios.desglose import asegurar_desglose
 from semillas.poblar_cedis import poblar_andenes, poblar_sucursales_y_ubicaciones
 
@@ -83,6 +84,22 @@ ORDENES = [
         ("SKU-883417", "Chiles jalapeños 380 g (caja 12)", 30, "24.90"),
         ("SKU-993202", "Sardina en tomate 155 g (caja 24)", 18, "22.50"),
     ]),
+]
+
+# Tarimas en rack para el Tablero (C3), las mismas 9 sucursales del diseño:
+# (sucursal, nombre, tarimas, horas de la más antigua, kg y m3 totales).
+# La antigüedad se cuenta desde que corre el script: si pasa un día, las
+# filas se vuelven excepción. Vuelva a correrlo antes de presentar.
+TARIMAS = [
+    ("SUC-03", "Centro", 11, 14, 10_840, 26.8),         # tortón al 92%: liberar
+    ("SUC-14", "Plaza Oriente", 11, 9, 10_500, 26.2),   # tortón al 92%: liberar
+    ("SUC-07", "Norte", 9, 22, 8_960, 21.4),            # acumulando
+    ("SUC-21", "Las Flores", 6, 17, 5_720, 14.3),       # rabón lleno: liberar
+    ("SUC-28", "Industrial", 5, 41, 4_810, 11.9),       # > 36 h: excepción
+    ("SUC-11", "Sur", 4, 38, 3_900, 9.5),               # > 36 h: excepción
+    ("SUC-19", "Valle", 3, 12, 2_740, 7.1),             # camioneta llena: liberar
+    ("SUC-32", "Lomas", 2, 37, 1_880, 4.8),             # > 36 h: excepción
+    ("SUC-25", "Poniente", 2, 6, 1_910, 4.8),           # acumulando
 ]
 
 # (folio cita, OC, andén, hora, bultos declarados)
@@ -159,6 +176,33 @@ def poblar(sesion: Session) -> None:
         sesion.flush()
         asegurar_desglose(sesion, cita)
 
+    poblar_tarimas(sesion)
+
+
+def poblar_tarimas(sesion: Session) -> None:
+    ahora = ahora_utc()
+    consecutivo = 1
+    for clave, nombre, n, horas, kg, m3 in TARIMAS:
+        sucursal = sesion.scalars(select(Sucursal).where(Sucursal.clave == clave)).one()
+        sucursal.nombre = nombre
+        numero = int(clave[4:])
+        for i in range(n):
+            # La primera es la más antigua; las demás se armaron después.
+            armada = ahora - timedelta(hours=horas - i * (horas / max(n, 1)) * 0.6)
+            sesion.add(
+                Tarima(
+                    folio=f"T-{consecutivo:04d}",
+                    sucursal=clave,
+                    peso_kg=min(990.0, round(kg / n, 1)),
+                    volumen_m3=round(m3 / n, 3),
+                    n_bultos=24,
+                    armada_en=armada,
+                    ubicacion=f"SUC{numero:02d}-N{i // 6 + 1}-P{i % 6 + 1:02d}",
+                    estado="EN_RACK",
+                )
+            )
+            consecutivo += 1
+
 
 def principal() -> None:
     if "--confirmar" not in sys.argv:
@@ -170,7 +214,8 @@ def principal() -> None:
         sesion.commit()
     print(
         f"Demo limpia: {len(PROVEEDORES)} proveedores, {len(CITAS)} citas con etiquetas, "
-        f"{len(ORDENES) - len(CITAS)} OC sin cita para el Portal."
+        f"{len(ORDENES) - len(CITAS)} OC sin cita para el Portal, "
+        f"{sum(t[2] for t in TARIMAS)} tarimas en rack ({len(TARIMAS)} sucursales)."
     )
 
 
