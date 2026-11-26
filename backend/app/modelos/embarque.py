@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from datetime import datetime
 
-from sqlalchemy import DateTime, Float, Integer, String
+from sqlalchemy import DateTime, Float, Index, Integer, String, text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db import Base, MixinFechas
@@ -19,6 +19,14 @@ class Embarque(Base, MixinFechas):
     """
 
     __tablename__ = "embarque"
+    __table_args__ = (
+        Index(
+            "uq_embarque_abierto_sucursal",
+            "sucursal",
+            unique=True,
+            postgresql_where=text("estado = 'ABIERTO'"),
+        ),
+    )
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     folio: Mapped[str] = mapped_column(String(32), unique=True, index=True)
@@ -46,7 +54,7 @@ class Embarque(Base, MixinFechas):
     permiso_sict: Mapped[str | None] = mapped_column(String(32))
     uuid_carta_porte: Mapped[str | None] = mapped_column(String(36))
 
-    tarimas: Mapped[list["Tarima"]] = relationship(  # noqa: F821
+    tarimas: Mapped[list[Tarima]] = relationship(  # noqa: F821
         back_populates="embarque"
     )
 

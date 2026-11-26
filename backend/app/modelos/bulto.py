@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from sqlalchemy import Float, ForeignKey, Integer, String
+from sqlalchemy import CheckConstraint, Float, ForeignKey, Index, Integer, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db import Base, MixinFechas
@@ -17,6 +17,11 @@ class Bulto(Base, MixinFechas):
     """
 
     __tablename__ = "bulto"
+    __table_args__ = (
+        CheckConstraint("cantidad > 0", name="ck_bulto_cantidad_positiva"),
+        CheckConstraint("peso_kg > 0", name="ck_bulto_peso_positivo"),
+        Index("ix_bulto_cita_estado", "cita_id", "estado"),
+    )
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     id_bulto: Mapped[str] = mapped_column(String(24), unique=True, index=True)  # B00412
@@ -41,8 +46,8 @@ class Bulto(Base, MixinFechas):
     motivo_rechazo: Mapped[str | None] = mapped_column(String(200))
     folio_reimpresion: Mapped[str | None] = mapped_column(String(32))
 
-    cita: Mapped["Cita | None"] = relationship(back_populates="bultos")  # noqa: F821
-    eventos: Mapped[list["EventoBulto"]] = relationship(  # noqa: F821
+    cita: Mapped[Cita | None] = relationship(back_populates="bultos")  # noqa: F821
+    eventos: Mapped[list[EventoBulto]] = relationship(  # noqa: F821
         back_populates="bulto", cascade="all, delete-orphan"
     )
 

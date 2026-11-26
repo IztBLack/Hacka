@@ -9,7 +9,7 @@ el event loop, que es el error clásico.
 from __future__ import annotations
 
 from collections.abc import Generator
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from sqlalchemy import DateTime, create_engine
 from sqlalchemy.orm import DeclarativeBase, Mapped, Session, mapped_column, sessionmaker
@@ -37,7 +37,7 @@ class Base(DeclarativeBase):
 
 def ahora_utc() -> datetime:
     """Marca de tiempo en UTC: el CEDIS y la nube tienen que coincidir."""
-    return datetime.now(timezone.utc)
+    return datetime.now(UTC)
 
 
 class MixinFechas:
