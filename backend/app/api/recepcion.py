@@ -8,6 +8,8 @@ no duplicar nada al vaciar la cola.
 
 from __future__ import annotations
 
+import hashlib
+import uuid
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, status
@@ -40,6 +42,7 @@ from app.servicios.repositorios import (
     RepositorioCitas,
     RepositorioEmbarques,
     RepositorioOrdenes,
+    restriccion_violada,
 )
 
 router = APIRouter()
@@ -105,7 +108,11 @@ def registrar_escaneo(solicitud: SolicitudEscaneo, sesion: SesionDep) -> Respues
             motivo="evento ya sincronizado (mismo UUID): la cola no reprocesa",
         )
 
-    estado = repo_ordenes.estado_recepcion(_folio_oc(sesion, cita.orden_compra_id))
+    # Candado sobre las líneas de la OC hasta el commit: dos equipos que
+    # sincronizan la misma OC se serializan y el excedente no se cuela.
+    estado = repo_ordenes.estado_recepcion(
+        _folio_oc(sesion, cita.orden_compra_id), bloquear=True
+    )
 
     # Lectura previa del id impreso, solo para traer el contexto de acomodo
     # (sucursal y ubicación). Todavía no es un dato confiable: si la firma
@@ -124,67 +131,111 @@ def registrar_escaneo(solicitud: SolicitudEscaneo, sesion: SesionDep) -> Respues
         ubicacion_rack=bulto.ubicacion if bulto is not None else None,
     )
 
-    if bulto is not None:
-        nuevo_estado = ESTADO_POR_DESENLACE.get(resultado.desenlace)
-        if nuevo_estado is not None:
-            # Se avanza por la máquina de estados, un paso a la vez.
-            if transicion_valida(EstadoBulto(bulto.estado), EstadoBulto.ESCANEADO_ANDEN):
-                bulto.estado = EstadoBulto.ESCANEADO_ANDEN.value
-            if not transicion_valida(EstadoBulto(bulto.estado), nuevo_estado):
-                raise HTTPException(
-                    status.HTTP_409_CONFLICT,
-                    f"transición ilegal: {bulto.estado} -> {nuevo_estado.value}",
-                )
-            bulto.estado = nuevo_estado.value
-            if resultado.destino is not None:
-                bulto.tipo_destino = resultado.destino.tipo.value
-                bulto.ubicacion = resultado.destino.ubicacion
-            if resultado.rechazado:
-                bulto.motivo_rechazo = resultado.motivo
+    if resultado.desenlace is Desenlace.DUPLICADO:
+        # Ya resuelto en un escaneo anterior: no se toca nada.
+        sesion.rollback()
+        acumulado = estado.cantidad_recibida(resultado.sku) if resultado.sku else None
+        return _a_salida(resultado, acumulado)
 
-        try:
-            repo_bultos.registrar_evento(
-                EventoBulto(
-                    uuid_evento=solicitud.uuid_evento,
-                    bulto_id=bulto.id,
-                    estado=bulto.estado,
-                    desenlace=resultado.desenlace.value,
-                    motivo=resultado.motivo,
-                    ocurrido_en=solicitud.ocurrido_en or ahora_utc(),
-                    sincronizado_en=ahora_utc(),
-                    dispositivo=solicitud.dispositivo,
-                    operador=solicitud.operador,
-                )
-            )
-        except IntegrityError:
-            # La clave única (bulto, estado) ya tenía este evento: es un reenvío.
+    # Con firma inválida el id impreso no es confiable: NO se toca el bulto
+    # que ese id nombra (sería dejar que una fotocopia rechace al legítimo).
+    # Solo queda el acta, sin bulto asociado.
+    firma_confiable = resultado.desenlace is not Desenlace.RECHAZADO_FIRMA_INVALIDA
+    bulto_confiable = bulto if firma_confiable else None
+
+    if bulto_confiable is not None:
+        nuevo_estado = ESTADO_POR_DESENLACE[resultado.desenlace]
+        # Se avanza por la máquina de estados, un paso a la vez. El estado
+        # se pasa tal cual viene de la base: `transicion_valida` ya trata
+        # un valor fuera de la máquina como transición ilegal (409), en vez
+        # de reventar con ValueError al construir el enum (500).
+        if transicion_valida(bulto_confiable.estado, EstadoBulto.ESCANEADO_ANDEN):
+            bulto_confiable.estado = EstadoBulto.ESCANEADO_ANDEN.value
+        if not transicion_valida(bulto_confiable.estado, nuevo_estado):
             sesion.rollback()
-            return RespuestaEscaneo(
-                desenlace=Desenlace.DUPLICADO.value,
-                id_bulto=resultado.id_bulto,
-                motivo="el bulto ya registró este estado",
+            raise HTTPException(
+                status.HTTP_409_CONFLICT,
+                f"transición ilegal: {bulto_confiable.estado} -> {nuevo_estado.value}",
             )
+        bulto_confiable.estado = nuevo_estado.value
+        if resultado.destino is not None:
+            bulto_confiable.tipo_destino = resultado.destino.tipo.value
+            bulto_confiable.ubicacion = resultado.destino.ubicacion
+        if resultado.rechazado:
+            bulto_confiable.motivo_rechazo = resultado.motivo
+
+        sesion.add(
+            EventoBulto(
+                uuid_evento=solicitud.uuid_evento,
+                bulto_id=bulto_confiable.id,
+                estado=bulto_confiable.estado,
+                desenlace=resultado.desenlace.value,
+                motivo=(resultado.motivo or "")[:200] or None,
+                ocurrido_en=solicitud.ocurrido_en or ahora_utc(),
+                sincronizado_en=ahora_utc(),
+                dispositivo=solicitud.dispositivo,
+                operador=solicitud.operador,
+            )
+        )
+
+    if resultado.aceptado and resultado.sku is not None:
+        repo_ordenes.sumar_recibido(cita.orden_compra_id, resultado.sku, resultado.cantidad)
 
     tipo_acta = TIPO_ACTA_POR_DESENLACE.get(resultado.desenlace)
     if tipo_acta is not None:
-        RepositorioEmbarques(sesion).guardar_acta(
+        sesion.add(
             Acta(
-                folio=f"ACTA-{tipo_acta.value}-{resultado.id_bulto}-{ahora_utc():%H%M%S}",
+                folio=_folio_acta(solicitud.uuid_evento),
                 tipo=tipo_acta.value,
                 cita_id=cita.id,
                 orden_compra_id=cita.orden_compra_id,
-                bulto_id=bulto.id if bulto is not None else None,
+                bulto_id=bulto_confiable.id if bulto_confiable is not None else None,
                 cuerpo={
                     "id_bulto": resultado.id_bulto,
                     "sku": resultado.sku,
                     "cantidad": resultado.cantidad,
                     "motivo": resultado.motivo,
+                    "uuid_evento": str(solicitud.uuid_evento),
                 },
             )
         )
 
+    # Bulto, evento, acumulado y acta: una sola transacción. O entra todo o
+    # nada, y el reintento del handheld encuentra el mismo estado.
+    try:
+        sesion.commit()
+    except IntegrityError as exc:
+        sesion.rollback()
+        if restriccion_violada(exc) in RESTRICCIONES_DE_REENVIO:
+            return RespuestaEscaneo(
+                desenlace=Desenlace.DUPLICADO.value,
+                id_bulto=resultado.id_bulto,
+                motivo="evento ya sincronizado: la cola no reprocesa",
+            )
+        raise
+
     acumulado = estado.cantidad_recibida(resultado.sku) if resultado.sku else None
     return _a_salida(resultado, acumulado)
+
+
+# Violaciones que significan "esto ya se había sincronizado", y nada más.
+# Cualquier otra (FK, CHECK, NOT NULL) es un error real y se propaga.
+RESTRICCIONES_DE_REENVIO = frozenset(
+    {"uq_bulto_estado", "ix_evento_bulto_uuid_evento", "ix_acta_folio"}
+)
+
+
+def _folio_acta(uuid_evento: object) -> str:
+    """Folio determinista del acta de un escaneo (cabe en String(32)).
+
+    Derivado del UUID del evento: el reenvío del mismo escaneo choca con el
+    índice único en vez de crear un acta nueva cada segundo.
+    """
+    try:
+        base = uuid.UUID(str(uuid_evento)).hex
+    except ValueError:
+        base = hashlib.sha256(str(uuid_evento).encode()).hexdigest()
+    return f"ACTA{base[:28].upper()}"
 
 
 def _folio_oc(sesion: Session, orden_compra_id: int) -> str:
@@ -208,16 +259,20 @@ def cerrar_cita(folio_cita: str, sesion: SesionDep) -> RespuestaCierreCita:
     cita = repo_citas.por_folio(folio_cita)
     if cita is None:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "cita no encontrada")
+    if cita.estado == "CERRADA":
+        # Reintento por timeout del handheld: el cierre ya ocurrió y el acta
+        # ya existe. Se responde 409 en vez de chocar con el folio único (500).
+        raise HTTPException(status.HTTP_409_CONFLICT, "la cita ya está cerrada")
 
     estado = RepositorioOrdenes(sesion).estado_recepcion(
-        _folio_oc(sesion, cita.orden_compra_id)
+        _folio_oc(sesion, cita.orden_compra_id), bloquear=True
     )
     acta_dominio = calcular_faltantes(estado)
 
     folio_acta = None
     if acta_dominio.hay_faltantes:
         folio_acta = f"ACTA-FALTANTE-{cita.folio}"
-        RepositorioEmbarques(sesion).guardar_acta(
+        sesion.add(
             Acta(
                 folio=folio_acta,
                 tipo=TipoActa.FALTANTE.value,
@@ -240,7 +295,16 @@ def cerrar_cita(folio_cita: str, sesion: SesionDep) -> RespuestaCierreCita:
         )
 
     cita.estado = "CERRADA"
-    sesion.commit()
+    try:
+        # Acta y cierre en la misma transacción.
+        sesion.commit()
+    except IntegrityError as exc:
+        sesion.rollback()
+        if restriccion_violada(exc) == "ix_acta_folio":
+            raise HTTPException(
+                status.HTTP_409_CONFLICT, "la cita ya está cerrada"
+            ) from exc
+        raise
 
     aceptados = sum(1 for d in estado.escaneados.values() if d is Desenlace.ACEPTADO)
     rechazados = sum(

@@ -14,8 +14,8 @@ es el cross-dock, el bulto va del andén de recibo al de salida sin tocar rack.
 
 from __future__ import annotations
 
+from collections.abc import Iterable
 from enum import StrEnum
-from typing import Iterable
 
 __all__ = [
     "EstadoBulto",
@@ -75,11 +75,14 @@ def siguientes_estados(desde: EstadoBulto) -> frozenset[EstadoBulto]:
     return TRANSICIONES[EstadoBulto(desde)]
 
 
-def transicion_valida(desde: EstadoBulto, hacia: EstadoBulto) -> bool:
+def transicion_valida(desde: EstadoBulto | str, hacia: EstadoBulto | str) -> bool:
     """True solo si la transición está declarada en TRANSICIONES.
 
     Rechaza saltos (ETIQUETADO -> EMBARCADO), retrocesos (UBICADO -> RECIBIDO)
     y la repetición del mismo estado, que sería un doble registro.
+
+    Acepta cadenas sueltas a propósito: el estado llega de una columna de texto
+    y un valor que no está en la máquina es "no válido", no un error.
     """
     try:
         origen = EstadoBulto(desde)

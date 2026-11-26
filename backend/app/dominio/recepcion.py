@@ -126,7 +126,7 @@ class EstadoRecepcion:
     @classmethod
     def desde_listas(
         cls, lineas: list[LineaOC], esperados: list[BultoEsperado]
-    ) -> "EstadoRecepcion":
+    ) -> EstadoRecepcion:
         """Constructor cómodo para el adaptador que lee de la base."""
         return cls(
             lineas={linea.sku: linea for linea in lineas},

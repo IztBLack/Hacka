@@ -31,7 +31,7 @@ def _volumen(tarimas: int) -> float:
 
 def test_la_tarima_mide_lo_que_dice_el_reto() -> None:
     """1.12 x 1.15 x 1.85 m = 2.3828 m3, hasta 1,000 kg."""
-    assert VOLUMEN_TARIMA_M3 == pytest.approx(2.3828, abs=0.0001)
+    assert pytest.approx(2.3828, abs=0.0001) == VOLUMEN_TARIMA_M3
     assert PESO_MAX_TARIMA_KG == 1000.0
 
 
