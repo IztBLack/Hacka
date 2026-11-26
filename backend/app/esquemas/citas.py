@@ -79,6 +79,43 @@ class RespuestaCita(BaseModel):
     model_config = {"from_attributes": True}
 
 
+class ResumenCita(BaseModel):
+    """Una cita como la ven las demás pantallas (etiquetas, handheld)."""
+
+    folio: str
+    proveedor: str
+    razon_social: str
+    orden_compra: str
+    fecha: date
+    anden: int
+    hora_inicio: time
+    hora_fin: time
+    n_bultos: int
+    estado: str
+
+
+class BultoEtiqueta(BaseModel):
+    """Lo que se imprime en una etiqueta 4" x 6"."""
+
+    id_bulto: str
+    secuencia: int
+    sku: str
+    descripcion: str
+    sucursal: str
+    nombre_sucursal: str
+    cantidad: int
+    peso_kg: float
+    volumen_m3: float
+    estado: str
+    cadena_qr: str
+
+
+class RespuestaEtiquetasCita(BaseModel):
+    cita: ResumenCita
+    total: int
+    bultos: list[BultoEtiqueta]
+
+
 class RespuestaCapacidad(BaseModel):
     """Diagnóstico de capacidad: el hallazgo que no se puede comprar."""
 
